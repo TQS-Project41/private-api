@@ -3,7 +3,6 @@ package com.example.demo.Models;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -37,8 +36,7 @@ public class OrderProductItem {
     public OrderProductItem() {
     }
     
-    public OrderProductItem( double price,
-            OrderList orderList, Product product) {
+    public OrderProductItem(double price, OrderList orderList, Product product) {
         this.id = new OrderProductItemId(product.getId(),orderList.getId());
         this.price = price;
         this.orderList = orderList;
