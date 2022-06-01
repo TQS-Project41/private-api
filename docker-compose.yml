@@ -1,0 +1,26 @@
+version: "3.0"
+services:
+  db:
+    image: mysql:latest
+    env_file: ./.env
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    ports:
+      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+    volumes:
+      - datafiles:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: "mysql $MYSQL_DATABASE -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'SELECT 1;'"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  
+
+  
+volumes:
+  datafiles:
+       
