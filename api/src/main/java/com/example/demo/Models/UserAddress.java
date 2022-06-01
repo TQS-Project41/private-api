@@ -23,14 +23,13 @@ public class UserAddress {
     @EmbeddedId
     private UserAddressID id;
 
-
-    @OneToOne
+    @ManyToOne
     @MapsId("userId")
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
     
-    @ManyToOne
+    @OneToOne
     @MapsId("addressId")
     @JoinColumn(name="address_id", nullable=false)
     private Address address;

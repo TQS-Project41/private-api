@@ -1,5 +1,6 @@
 package com.example.demo.Models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -28,7 +29,7 @@ public class Product {
 
     @Column
     @NotNull(message = "name é obrigatório")
-    private Float price;
+    private double price;
 
     @Column
     @NotNull(message = "Description é obrigatório")
@@ -50,23 +51,15 @@ public class Product {
 
     
     public Product() {
+        this.productListItems= new HashSet<>();
+        this.orderProductItem= new HashSet<>();
     }
 
 
-    public Product( String name,
-            Float price,
-             String description,
-             Boolean isActive, Category category) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.isActive = isActive;
-        this.category = category;
-    }
-
+   
     
     public Product( String name,
-             Float price,
+             double price,
              String description,
             Boolean isActive, Set<ProductListItem> productListItems,
             Set<OrderProductItem> orderProductItem, Category category) {
@@ -100,12 +93,12 @@ public class Product {
     }
 
 
-    public Float getPrice() {
+    public double getPrice() {
         return price;
     }
 
 
-    public void setPrice(Float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

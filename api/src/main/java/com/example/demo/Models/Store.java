@@ -1,5 +1,6 @@
 package com.example.demo.Models;
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -36,7 +37,7 @@ public class Store {
     
     
     public Store() {
-        
+        this.orderList= new HashSet<>();
     }
 
 
