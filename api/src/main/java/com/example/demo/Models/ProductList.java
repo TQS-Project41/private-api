@@ -1,5 +1,6 @@
 package com.example.demo.Models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -53,13 +54,20 @@ public class ProductList {
     }
 
     public ProductList() {
+        this.productListItems = new HashSet<>();
     }
     
-    public ProductList(Set<ProductListItem> productListItems) {
+    
+    
+    public ProductList(Set<ProductListItem> productListItems, User user, CartList cartList, SavedList savedList,
+            OrderList orderList) {
         this.productListItems = productListItems;
+        this.user = user;
+        this.cartList = cartList;
+        this.savedList = savedList;
+        this.orderList = orderList;
     }
 
-    
     public SavedList getSavedList() {
         return savedList;
     }
@@ -68,11 +76,7 @@ public class ProductList {
         this.savedList = savedList;
     }
 
-    public ProductList(Set<ProductListItem> productListItems, User user) {
-        this.productListItems = productListItems;
-        this.user = user;
-    }
-
+   
     
     public OrderList getOrderList() {
         return orderList;
