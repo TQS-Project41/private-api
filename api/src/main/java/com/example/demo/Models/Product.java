@@ -1,7 +1,5 @@
 package com.example.demo.Models;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Table;
@@ -38,12 +35,6 @@ public class Product {
     @NotNull(message = "IsActive é obrigatório")
     private Boolean isActive;
 
-    @OneToMany(mappedBy="product")
-    private Set<ProductListItem> productListItems;
-    
-    @OneToMany(mappedBy="product")
-    private Set<OrderProductItem> orderProductItem;
-
     @ManyToOne
     @JoinColumn(name="category_id", nullable=false)
     private Category category;
@@ -51,34 +42,14 @@ public class Product {
     
     public Product() {
     }
-
-
-    public Product( String name,
-            Float price,
-             String description,
-             Boolean isActive, Category category) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.isActive = isActive;
-        this.category = category;
-    }
-
     
-    public Product( String name,
-             Float price,
-             String description,
-            Boolean isActive, Set<ProductListItem> productListItems,
-            Set<OrderProductItem> orderProductItem, Category category) {
+    public Product(String name, float price, String description, Boolean isActive, Category category) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.isActive = isActive;
-        this.productListItems = productListItems;
-        this.orderProductItem = orderProductItem;
         this.category = category;
     }
-
 
     public Long getId() {
         return id;
@@ -129,29 +100,6 @@ public class Product {
         this.isActive = isActive;
     }
 
-
-    
-    
-    public Set<OrderProductItem> getOrderProductItem() {
-        return orderProductItem;
-    }
-
-
-    public void setOrderProductItem(Set<OrderProductItem> orderProductItem) {
-        this.orderProductItem = orderProductItem;
-    }
-
-
-    public Set<ProductListItem> getProductListItems() {
-        return productListItems;
-    }
-
-
-    public void setProductListItems(Set<ProductListItem> productListItems) {
-        this.productListItems = productListItems;
-    }
-
-
     public Category getCategory() {
         return category;
     }
@@ -160,7 +108,6 @@ public class Product {
     public void setCategory(Category category) {
         this.category = category;
     }
-
 
     @Override
     public String toString() {
