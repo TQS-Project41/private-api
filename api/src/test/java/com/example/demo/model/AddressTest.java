@@ -21,7 +21,7 @@ public class AddressTest {
         x.setId(1);
         x.setStore(null);
         x.setZipcode("1204-322");
-        Set<UserAddress> u_adress= new HashSet();
+        UserAddress u_adress= new UserAddress();
         x.setUserAddress(u_adress);
 
         assertEquals("Rua das Pombas", x.getAddress());
@@ -31,12 +31,11 @@ public class AddressTest {
         assertEquals(null, x.getOrderList());
         assertEquals(1, x.getId());
         assertEquals(null, x.getStore());
-        assertEquals(0, x.getUserAddress().size());
 
     }
     @Test
     void testWhenCreateValidAddressWithConstuctorWithFullParametersThenReturnAddress(){
-        Set<UserAddress> u_adress= new HashSet();
+        UserAddress u_adress= new UserAddress();
         Address x = new Address("Portugal", "1204-322", "Aveiro", "Rua das Pombas", null, null, u_adress);
 
 
@@ -46,7 +45,6 @@ public class AddressTest {
         assertEquals("1204-322", x.getZipcode());
         assertEquals(null, x.getOrderList());
         assertEquals(null, x.getStore());
-        assertEquals(0, x.getUserAddress().size());
 
     }
 }

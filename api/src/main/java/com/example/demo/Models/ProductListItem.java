@@ -68,5 +68,25 @@ public class ProductListItem {
         this.product = product;
     }
 
+
+    public ProductListItemId getId() {
+        return id;
+    }
+
+
+    public void setId(ProductListItemId id) {
+        this.id = id;
+    }
+
+
+    public ProductList getList() {
+        return list;
+    }
+
+
+    public void setList(ProductList list) {
+        this.list = list;
+    }
+
     
 }

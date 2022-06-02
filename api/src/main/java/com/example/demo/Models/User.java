@@ -1,5 +1,6 @@
 package com.example.demo.Models;
-import java.sql.Date;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -54,20 +55,26 @@ public class User {
     private Set<ProductList> productList;
 
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private UserAddress userAddress;
+
+    @OneToMany(mappedBy="user")
+    private Set<UserAddress> userAddress;
+
 
     public User() {
+        this.productList= new HashSet<>();
+        this.userAddress=new HashSet<>();
     }
 
 
+  
+
     public User( String email,
             String name,
-           String password, Date birthday,
-           String phoneNumber,
-           boolean isAdmin,
-           boolean isStuff) {
+             String password, Date birthday,
+            String phoneNumber,
+             boolean isAdmin,
+             boolean isStuff, Set<ProductList> productList,
+            Set<UserAddress> userAddress) {
         this.email = email;
         this.name = name;
         this.password = password;
@@ -75,8 +82,26 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.isAdmin = isAdmin;
         this.isStuff = isStuff;
+        this.productList = productList;
+        this.userAddress = userAddress;
     }
-    
+
+
+
+
+    public Set<UserAddress> getUserAddress() {
+        return userAddress;
+    }
+
+
+
+
+    public void setUserAddress(Set<UserAddress> userAddress) {
+        this.userAddress = userAddress;
+    }
+
+
+
 
     public Set<ProductList> getProductList() {
         return productList;
@@ -88,14 +113,7 @@ public class User {
     }
 
 
-    public UserAddress getUserAddress() {
-        return userAddress;
-    }
-
-
-    public void setUserAddress(UserAddress userAddress) {
-        this.userAddress = userAddress;
-    }
+    
 
 
     public long getId() {
@@ -158,7 +176,7 @@ public class User {
     }
 
 
-    public boolean isAdmin() {
+    public boolean getAdmin() {
         return isAdmin;
     }
 
@@ -168,7 +186,7 @@ public class User {
     }
 
 
-    public boolean isStuff() {
+    public boolean getStuff() {
         return isStuff;
     }
 
@@ -179,5 +197,5 @@ public class User {
 
     
     
-
+    
 }
