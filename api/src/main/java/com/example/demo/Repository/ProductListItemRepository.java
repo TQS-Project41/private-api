@@ -1,10 +1,13 @@
 package com.example.demo.Repository;
 
+import com.example.demo.Models.ProductListItem;
+import com.example.demo.Models.ProductListItemId;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface ProductListItemRepository extends JpaRepository<ProductListRepository, Long> {
+public interface ProductListItemRepository extends JpaRepository<ProductListItem, ProductListItemId> {
   
 }

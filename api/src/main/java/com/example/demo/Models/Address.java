@@ -75,6 +75,32 @@ public class Address {
         this.userAddress = userAddress;
     }
 
+    public Address(String country,
+    String zipcode,
+     String city,
+    String address, Store store
+            ) {
+        this.country = country;
+        this.zipcode = zipcode;
+        this.city = city;
+        this.address = address;
+        this.store = store;
+
+        }
+
+   
+        public Address(String country,
+        String zipcode,
+        String city,
+        String address
+            ) {
+        this.country = country;
+        this.zipcode = zipcode;
+        this.city = city;
+        this.address = address;     
+        }
+
+
 
 
     public long getId() {

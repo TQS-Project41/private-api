@@ -57,8 +57,11 @@ public class ProductList {
         this.productListItems = new HashSet<>();
     }
     
-    
-    
+    public ProductList(Set<ProductListItem> productListItems, User user) {
+        this.productListItems = productListItems;
+        this.user = user;
+    }
+
     public ProductList(Set<ProductListItem> productListItems, User user, CartList cartList, SavedList savedList,
             OrderList orderList) {
         this.productListItems = productListItems;
