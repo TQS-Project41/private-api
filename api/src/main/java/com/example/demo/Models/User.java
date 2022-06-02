@@ -89,6 +89,27 @@ public class User {
 
 
 
+    public User( String email,
+            String name,
+             String password, Date birthday,
+            String phoneNumber,
+             boolean isAdmin,
+             boolean isStuff) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.birthday = birthday;
+        this.phoneNumber = phoneNumber;
+        this.isAdmin = isAdmin;
+        this.isStuff = isStuff;
+        this.productList= new HashSet<>();
+        this.userAddress=new HashSet<>();
+    }
+
+
+
+
+
     public Set<UserAddress> getUserAddress() {
         return userAddress;
     }

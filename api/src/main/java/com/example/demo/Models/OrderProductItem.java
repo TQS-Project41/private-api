@@ -47,9 +47,12 @@ public class OrderProductItem {
 
    
 
+    
+
     @Override
     public String toString() {
-        return "OrderProductItem [price=" + price + ", product=" + product + "]";
+        return "OrderProductItem [id=" + id + ", orderList=" + orderList + ", price=" + price + ", product=" + product
+                + "]";
     }
 
     public double getPrice() {
