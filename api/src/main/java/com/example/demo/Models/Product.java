@@ -25,7 +25,7 @@ public class Product {
 
     @Column
     @NotNull(message = "name é obrigatório")
-    private Float price;
+    private double price;
 
     @Column
     @NotNull(message = "Description é obrigatório")
@@ -71,12 +71,12 @@ public class Product {
     }
 
 
-    public Float getPrice() {
+    public double getPrice() {
         return price;
     }
 
 
-    public void setPrice(Float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

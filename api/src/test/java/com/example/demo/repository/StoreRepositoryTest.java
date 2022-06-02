@@ -1,5 +1,4 @@
 package com.example.demo.repository;
-
 import com.example.demo.Repository.ProductListItemRepository;
 import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolationException;
@@ -23,6 +22,7 @@ import com.example.demo.Repository.CategoryRepository;
 import com.example.demo.Repository.OrderProductItemRepository;
 import com.example.demo.Repository.ProductListRepository;
 import com.example.demo.Repository.ProductRepository;
+import com.example.demo.Repository.StoreRepository;
 import com.example.demo.Repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +53,7 @@ import org.testcontainers.utility.DockerImageName;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ProductRepositoryTest {
+public class StoreRepositoryTest {
     @Container
     public static MySQLContainer container = new MySQLContainer()
         .withUsername("user")
@@ -68,31 +68,26 @@ public class ProductRepositoryTest {
     }
 
     @Autowired
-    private ProductRepository rep;
+    private StoreRepository rep;
 
     @Autowired
     private TestEntityManager entityManager;
 
-
-
     @Test
     void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
 
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
-        
-        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
-        x.add(product);
-        
-        entityManager.persistAndFlush(cat);
-        entityManager.persistAndFlush(product);
-       
-        Optional<Product> res = rep.findById(product.getId());
-        assertThat(res).isPresent().contains(product);
+        Store store = new Store();
+        store.setName("puma");
+        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas", store);
+        store.setAddress(address);
+        entityManager.persistAndFlush(store);
+
+        Optional<Store> res = rep.findById(store.getId());
+        assertThat(res).isPresent().contains(store);
     }
     @Test
     void testWhenFindByInvalidId_thenReturnNull() {
-        Optional<Product> res = rep.findById(-1L);
+        Optional<Store> res = rep.findById(-1L);
         assertThat(res).isNotPresent();
     }
     /* ------------------------------------------------- *
@@ -104,42 +99,40 @@ public class ProductRepositoryTest {
     void testGivenAddressAndFindByAll_thenReturnSameAddress() {
         
 
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
+        Store store = new Store();
+        store.setName("puma");
+        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas", store);
+        store.setAddress(address);
+        entityManager.persistAndFlush(store);
 
-        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
-        Product product2 = new Product("Pilhas reciclaveis", 12, "leve", true, cat);
-       
-       
-        x.add(product);
-        x.add(product2);
+
+        Store store1 = new Store();
+        store1.setName("JOMA");
+        Address address1= new Address("Portugal", "3903-221", "Santarem", "Rua das Estia", store1);
+        store1.setAddress(address1);
+        entityManager.persistAndFlush(store1);
         
-        entityManager.persistAndFlush(cat);
-        entityManager.persistAndFlush(product);
-        entityManager.persistAndFlush(product2);
 
 
-
-
-        List<Product> all = rep.findAll();
+        List<Store> all = rep.findAll();
 
         assertThat(all).isNotNull();
         assertThat(all)
                 .hasSize(2)
-                .extracting(Product::getName)
-                .contains(product.getName(), product2.getName());
+                .extracting(Store::getName)
+                .contains(store.getName(), store1.getName());
        
     }
 
     @Test
-    void testGivenNoProduct_whenFindAll_thenReturnEmpty() {
-        List<Product> all = rep.findAll();
+    void testGivenNoStore_whenFindAll_thenReturnEmpty() {
+        List<Store> all = rep.findAll();
         assertThat(all).isNotNull().isEmpty();
     }
 
     @Test
-    void testWhenCreateInvalidProduct_thenReturnException() {
-        Product  x = new Product();
+    void testWhenCreateInvalidStore_thenReturnException() {
+        Store  x = new Store();
         assertThrows(ConstraintViolationException.class, () -> {
             entityManager.persistAndFlush(x);
         });

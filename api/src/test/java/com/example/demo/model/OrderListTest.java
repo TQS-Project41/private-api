@@ -22,7 +22,7 @@ public class OrderListTest {
         OrderList list = new OrderList();
         Store store = new Store();
         store.setName("puma");
-        Set<UserAddress> userAddress = new HashSet<>();
+        UserAddress userAddress = new UserAddress();
         list.setAddress(new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas", store, list, userAddress));
         list.setStore(store);
         list.setDeliveryId(1L);
@@ -48,7 +48,7 @@ public class OrderListTest {
         Store store = new Store();
         store.setName("puma");
         OrderList list_tmp= new OrderList();
-        Set<UserAddress> userAddress = new HashSet<>();
+        UserAddress userAddress = new UserAddress();
         Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas", store, list_tmp, userAddress);
         Set<OrderProductItem> orderProductItem=new HashSet<>();
         ProductList productList = new ProductList();

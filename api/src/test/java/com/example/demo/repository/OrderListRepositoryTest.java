@@ -1,6 +1,4 @@
 package com.example.demo.repository;
-
-import com.example.demo.Repository.ProductListItemRepository;
 import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolationException;
 
@@ -9,18 +7,15 @@ import com.example.demo.Models.CartList;
 import com.example.demo.Models.Category;
 import com.example.demo.Models.OrderList;
 import com.example.demo.Models.OrderProductItem;
-import com.example.demo.Models.OrderProductItemId;
 import com.example.demo.Models.Product;
 import com.example.demo.Models.ProductList;
-import com.example.demo.Models.ProductListItem;
-import com.example.demo.Models.ProductListItemId;
 import com.example.demo.Models.Store;
 import com.example.demo.Models.User;
 import com.example.demo.Models.UserAddress;
 import com.example.demo.Repository.AddressRepository;
 import com.example.demo.Repository.CartListRepository;
 import com.example.demo.Repository.CategoryRepository;
-import com.example.demo.Repository.OrderProductItemRepository;
+import com.example.demo.Repository.OrderListRepository;
 import com.example.demo.Repository.ProductListRepository;
 import com.example.demo.Repository.UserRepository;
 
@@ -52,7 +47,7 @@ import org.testcontainers.utility.DockerImageName;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ProductListItemRepositoryTest {
+public class OrderListRepositoryTest {
     @Container
     public static MySQLContainer container = new MySQLContainer()
         .withUsername("user")
@@ -67,14 +62,13 @@ public class ProductListItemRepositoryTest {
     }
 
     @Autowired
-    private ProductListItemRepository rep;
+    private OrderListRepository rep;
 
     @Autowired
     private TestEntityManager entityManager;
 
-
     @Test
-    void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
+    void testWhenCreateOrderListAndFindById_thenReturnSameOrderList() {
         Store store = new Store();
         store.setName("puma");
         Set<ProductList> productList = new HashSet<>();
@@ -99,51 +93,33 @@ public class ProductListItemRepositoryTest {
         entityManager.persistAndFlush(productListTmp);
         entityManager.persistAndFlush(list);
 
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
+
         
-        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
-        x.add(product);
         
-        entityManager.persistAndFlush(cat);
-        entityManager.persistAndFlush(product);
-
-        ProductListItem order = new ProductListItem(8, productListTmp, product);
-
-        entityManager.persistAndFlush(order);
-
-       
-        Optional<ProductListItem> res = rep.findById(order.getId());
-        assertThat(res).isPresent().contains(order);
+        Optional<OrderList> res = rep.findById(list.getId());
+        assertThat(res).isPresent().contains(list);
     }
-
-
-
-
 
     @Test
     void testWhenFindByInvalidId_thenReturnNull() {
-        Optional<ProductListItem> res = rep.findById(new ProductListItemId(-1L, -1L));
+        Optional<OrderList> res = rep.findById(-1L);
         assertThat(res).isNotPresent();
     }
     /* ------------------------------------------------- *
      * FIND TESTS                                  *
      * ------------------------------------------------- *
      */
-
-
     @Test
-    void testGivenProductListItemAndFindByAll_thenReturnSameProductListItem() {
+    void testGivenOrderListAndFindByAll_thenReturnSameOrderList() {
         Store store = new Store();
         store.setName("puma");
         Set<ProductList> productList = new HashSet<>();
         Set<UserAddress> userAddress=new HashSet<>();
         User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true, productList, userAddress);
-        entityManager.persistAndFlush(user);
         Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas", store);
         UserAddress userAddressTmp = new UserAddress(user, address);
-        ProductList productListTmp = new ProductList();
         Set<OrderProductItem> orderProductItem=new HashSet<>();
+        ProductList productListTmp = new ProductList();
         productListTmp.setUser(user);
         Set<OrderProductItem> productListItems=new HashSet<>();
         Long deliveryTimestamp=111111111111L;
@@ -158,50 +134,50 @@ public class ProductListItemRepositoryTest {
         entityManager.persistAndFlush(productListTmp);
         entityManager.persistAndFlush(list);
 
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
 
-        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
-        Product product2 = new Product("Pilhas reciclaveis", 12, "leve", true, cat);
-       
-       
-        x.add(product);
-        x.add(product2);
-        
-        entityManager.persistAndFlush(cat);
-        entityManager.persistAndFlush(product);
-        entityManager.persistAndFlush(product2);
+        Store store1 = new Store();
+        store1.setName("joma");
+        Set<ProductList> productList1 = new HashSet<>();
+        Set<UserAddress> userAddress1=new HashSet<>();
+        User user1 = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true, productList1, userAddress1);
+        entityManager.persistAndFlush(user);
+        Address address1= new Address("Portugal", "2222-221", "Santarem", "Rua das ss", store1);
+        UserAddress userAddressTmp1 = new UserAddress(user1, address1);
+        Set<OrderProductItem> orderProductItem1=new HashSet<>();
+        ProductList productListTmp1 = new ProductList();
+        productListTmp1.setUser(user1);
+        Set<OrderProductItem> productListItems1=new HashSet<>();
+        Long deliveryTimestamp1=111111111111L;
+        store1.setAddress(address1);
+        Long deliveryId1=11L;
+        OrderList list1 = new OrderList(productListTmp1, orderProductItem1, address1, store1, deliveryId1, deliveryTimestamp1);
+        list1.setProductListItems(productListItems1);
 
-        ProductListItem order = new ProductListItem(8, productListTmp, product);
+        entityManager.persistAndFlush(store1);
+        entityManager.persistAndFlush(address1);
+        entityManager.persistAndFlush(userAddressTmp1);
+        entityManager.persistAndFlush(productListTmp1);
+        entityManager.persistAndFlush(list1);
 
-        entityManager.persistAndFlush(order);
-
-        ProductListItem order2 = new ProductListItem(5, productListTmp, product2);
-
-        entityManager.persistAndFlush(order2);
-
-
-
-
-        List<ProductListItem> all = rep.findAll();
+        List<OrderList> all = rep.findAll();
 
         assertThat(all).isNotNull();
         assertThat(all)
                 .hasSize(2)
-                .extracting(ProductListItem::getAmount)
-                .contains(order.getAmount(), order2.getAmount());
+                .extracting(OrderList::getAddress)
+                .contains(list.getAddress(), list1.getAddress());
        
     }
 
     @Test
-    void testGivenNoProductListItem_whenFindAll_thenReturnEmpty() {
-        List<ProductListItem> all = rep.findAll();
+    void testGivenNoCartList_whenFindAll_thenReturnEmpty() {
+        List<OrderList> all = rep.findAll();
         assertThat(all).isNotNull().isEmpty();
     }
 
     @Test
-    void testWhenCreateInvalidProductListItem_thenReturnException() {
-        ProductListItem  x = new ProductListItem();
+    void testWhenCreateInvalidCartListAndFindById_thenReturnException() {
+        OrderList  x = new OrderList();
         assertThrows(PersistenceException.class, () -> {
             entityManager.persistAndFlush(x);
         });

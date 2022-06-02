@@ -1,5 +1,4 @@
 package com.example.demo.repository;
-
 import com.example.demo.Repository.ProductListItemRepository;
 import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolationException;
@@ -17,12 +16,14 @@ import com.example.demo.Models.ProductListItemId;
 import com.example.demo.Models.Store;
 import com.example.demo.Models.User;
 import com.example.demo.Models.UserAddress;
+import com.example.demo.Models.UserAddressID;
 import com.example.demo.Repository.AddressRepository;
 import com.example.demo.Repository.CartListRepository;
 import com.example.demo.Repository.CategoryRepository;
 import com.example.demo.Repository.OrderProductItemRepository;
 import com.example.demo.Repository.ProductListRepository;
 import com.example.demo.Repository.ProductRepository;
+import com.example.demo.Repository.UserAddressRepository;
 import com.example.demo.Repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +54,7 @@ import org.testcontainers.utility.DockerImageName;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ProductRepositoryTest {
+public class UserAddressRepositoryTest {
     @Container
     public static MySQLContainer container = new MySQLContainer()
         .withUsername("user")
@@ -68,31 +69,29 @@ public class ProductRepositoryTest {
     }
 
     @Autowired
-    private ProductRepository rep;
+    private UserAddressRepository rep;
 
     @Autowired
     private TestEntityManager entityManager;
 
-
-
     @Test
     void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
 
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
-        
-        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
-        x.add(product);
-        
-        entityManager.persistAndFlush(cat);
-        entityManager.persistAndFlush(product);
-       
-        Optional<Product> res = rep.findById(product.getId());
-        assertThat(res).isPresent().contains(product);
+        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
+        entityManager.persistAndFlush(address);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        entityManager.persistAndFlush(user);
+
+
+        UserAddress uA = new UserAddress(user, address);
+        entityManager.persistAndFlush(uA);
+
+        Optional<UserAddress> res = rep.findById(uA.getId());
+        assertThat(res).isPresent().contains(uA);
     }
     @Test
     void testWhenFindByInvalidId_thenReturnNull() {
-        Optional<Product> res = rep.findById(-1L);
+        Optional<UserAddress> res = rep.findById(new UserAddressID(-1L, -1L));
         assertThat(res).isNotPresent();
     }
     /* ------------------------------------------------- *
@@ -101,46 +100,49 @@ public class ProductRepositoryTest {
      */
 
     @Test
-    void testGivenAddressAndFindByAll_thenReturnSameAddress() {
-        
-
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
-
-        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
-        Product product2 = new Product("Pilhas reciclaveis", 12, "leve", true, cat);
-       
-       
-        x.add(product);
-        x.add(product2);
-        
-        entityManager.persistAndFlush(cat);
-        entityManager.persistAndFlush(product);
-        entityManager.persistAndFlush(product2);
+    void testGivenUserAddressAndFindByAll_thenReturnSameUserAddress() {
+        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
+        entityManager.persistAndFlush(address);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        entityManager.persistAndFlush(user);
 
 
+        UserAddress uA = new UserAddress(user, address);
+        entityManager.persistAndFlush(uA);
 
 
-        List<Product> all = rep.findAll();
+        Address address1= new Address("Portugal", "1903-111", "Ovar", "Rua das Estia");
+        entityManager.persistAndFlush(address1);
+        User user1 = new User("aaa@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "912321321", false, true);
+        entityManager.persistAndFlush(user1);
+
+
+        UserAddress uA1 = new UserAddress(user1, address1);
+        entityManager.persistAndFlush(uA1);
+
+
+
+
+        List<UserAddress> all = rep.findAll();
 
         assertThat(all).isNotNull();
         assertThat(all)
                 .hasSize(2)
-                .extracting(Product::getName)
-                .contains(product.getName(), product2.getName());
+                .extracting(UserAddress::getUser)
+                .contains(uA.getUser(), uA1.getUser());
        
     }
 
     @Test
-    void testGivenNoProduct_whenFindAll_thenReturnEmpty() {
-        List<Product> all = rep.findAll();
+    void testGivenNoUserAddressList_whenFindAll_thenReturnEmpty() {
+        List<UserAddress> all = rep.findAll();
         assertThat(all).isNotNull().isEmpty();
     }
 
     @Test
-    void testWhenCreateInvalidProduct_thenReturnException() {
-        Product  x = new Product();
-        assertThrows(ConstraintViolationException.class, () -> {
+    void testWhenCreateInvalidUserAndFindById_thenReturnException() {
+        UserAddress  x = new UserAddress();
+        assertThrows(PersistenceException.class, () -> {
             entityManager.persistAndFlush(x);
         });
     }

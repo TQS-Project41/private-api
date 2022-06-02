@@ -99,7 +99,7 @@ public class OrderProductListRepositoryTest {
         Set<Product> x = new HashSet();
         Category cat = new Category("Vegetais", false, x);
         
-        Product product = new Product("Pilhas", 5.1, "leve", true, cat);
+        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
         x.add(product);
         
         entityManager.persistAndFlush(cat);
@@ -156,7 +156,7 @@ public class OrderProductListRepositoryTest {
         Set<Product> x = new HashSet();
         Category cat = new Category("Vegetais", false, x);
 
-        Product product = new Product("Pilhas", 5.1, "leve", true, cat);
+        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
         Product product2 = new Product("Pilhas reciclaveis", 12, "leve", true, cat);
        
        
