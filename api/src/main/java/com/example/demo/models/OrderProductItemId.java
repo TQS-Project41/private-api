@@ -1,11 +1,9 @@
-package com.example.demo.Models;
+package com.example.demo.models;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
 
 @Embeddable
 public class OrderProductItemId implements Serializable {

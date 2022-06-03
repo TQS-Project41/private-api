@@ -1,7 +1,7 @@
-package com.example.demo.Repository;
+package com.example.demo.repository;
 
-import com.example.demo.Models.OrderProductItem;
-import com.example.demo.Models.OrderProductItemId;
+import com.example.demo.models.OrderProductItem;
+import com.example.demo.models.OrderProductItemId;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

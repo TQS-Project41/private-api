@@ -1,54 +1,27 @@
 package com.example.demo.repository;
 
-import com.example.demo.Repository.ProductListItemRepository;
-import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolationException;
 
-import com.example.demo.Models.Address;
-import com.example.demo.Models.CartList;
-import com.example.demo.Models.Category;
-import com.example.demo.Models.OrderList;
-import com.example.demo.Models.OrderProductItem;
-import com.example.demo.Models.OrderProductItemId;
-import com.example.demo.Models.Product;
-import com.example.demo.Models.ProductList;
-import com.example.demo.Models.ProductListItem;
-import com.example.demo.Models.ProductListItemId;
-import com.example.demo.Models.Store;
-import com.example.demo.Models.User;
-import com.example.demo.Models.UserAddress;
-import com.example.demo.Repository.AddressRepository;
-import com.example.demo.Repository.CartListRepository;
-import com.example.demo.Repository.CategoryRepository;
-import com.example.demo.Repository.OrderProductItemRepository;
-import com.example.demo.Repository.ProductListRepository;
-import com.example.demo.Repository.ProductRepository;
-import com.example.demo.Repository.UserRepository;
+import com.example.demo.models.Category;
+import com.example.demo.models.Product;
+import com.example.demo.repository.ProductRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 @DataJpaTest
 @Testcontainers
@@ -77,12 +50,9 @@ public class ProductRepositoryTest {
 
     @Test
     void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
-
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
+        Category cat = new Category("Vegetais", false);
         
         Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
-        x.add(product);
         
         entityManager.persistAndFlush(cat);
         entityManager.persistAndFlush(product);
@@ -102,24 +72,14 @@ public class ProductRepositoryTest {
 
     @Test
     void testGivenAddressAndFindByAll_thenReturnSameAddress() {
-        
-
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
+        Category cat = new Category("Vegetais", false);
 
         Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
         Product product2 = new Product("Pilhas reciclaveis", 12, "leve", true, cat);
-       
-       
-        x.add(product);
-        x.add(product2);
         
         entityManager.persistAndFlush(cat);
         entityManager.persistAndFlush(product);
         entityManager.persistAndFlush(product2);
-
-
-
 
         List<Product> all = rep.findAll();
 

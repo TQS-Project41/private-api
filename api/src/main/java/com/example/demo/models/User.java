@@ -1,17 +1,12 @@
-package com.example.demo.Models;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+package com.example.demo.models;
 
-import javax.persistence.CascadeType;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Table;
@@ -26,9 +21,11 @@ public class User {
     @Column
     @NotNull(message = "email é obrigatório")
     private String email;
+
     @Column
     @NotNull(message = "name é obrigatório")
     private String name;
+    
     @Column
     @NotNull(message = "password é obrigatório")
     private String password;
@@ -40,101 +37,26 @@ public class User {
     @NotNull(message = "phoneNumber é obrigatório")
     private String phoneNumber;
 
-
     @Column
     @NotNull(message = "IsActive é obrigatório")
     private boolean isAdmin;
 
-
     @Column
-    @NotNull(message = "isStuff é obrigatório")
-    private boolean isStuff;
-
-
-    @OneToMany(mappedBy="user")
-    private Set<ProductList> productList;
-
-
-
-    @OneToMany(mappedBy="user")
-    private Set<UserAddress> userAddress;
-
+    @NotNull(message = "isStaff é obrigatório")
+    private boolean isStaff;
 
     public User() {
-        this.productList= new HashSet<>();
-        this.userAddress=new HashSet<>();
     }
 
-
-  
-
-    public User( String email,
-            String name,
-             String password, Date birthday,
-            String phoneNumber,
-             boolean isAdmin,
-             boolean isStuff, Set<ProductList> productList,
-            Set<UserAddress> userAddress) {
+    public User(String email, String name, String password, Date birthday, String phoneNumber, boolean isAdmin, boolean isStaff) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.birthday = birthday;
         this.phoneNumber = phoneNumber;
         this.isAdmin = isAdmin;
-        this.isStuff = isStuff;
-        this.productList = productList;
-        this.userAddress = userAddress;
-    }
-
-
-
-
-    public User( String email,
-            String name,
-             String password, Date birthday,
-            String phoneNumber,
-             boolean isAdmin,
-             boolean isStuff) {
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.birthday = birthday;
-        this.phoneNumber = phoneNumber;
-        this.isAdmin = isAdmin;
-        this.isStuff = isStuff;
-        this.productList= new HashSet<>();
-        this.userAddress=new HashSet<>();
-    }
-
-
-
-
-
-    public Set<UserAddress> getUserAddress() {
-        return userAddress;
-    }
-
-
-
-
-    public void setUserAddress(Set<UserAddress> userAddress) {
-        this.userAddress = userAddress;
-    }
-
-
-
-
-    public Set<ProductList> getProductList() {
-        return productList;
-    }
-
-
-    public void setProductList(Set<ProductList> productList) {
-        this.productList = productList;
-    }
-
-
-    
+        this.isStaff = isStaff;
+    }  
 
 
     public long getId() {
@@ -207,13 +129,13 @@ public class User {
     }
 
 
-    public boolean getStuff() {
-        return isStuff;
+    public boolean getStaff() {
+        return isStaff;
     }
 
 
-    public void setStuff(boolean isStuff) {
-        this.isStuff = isStuff;
+    public void setStaff(boolean isStaff) {
+        this.isStaff = isStaff;
     }
 
     

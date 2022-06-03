@@ -2,8 +2,8 @@ package com.example.demo.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.demo.Models.Category;
-import com.example.demo.Models.Product;
+import com.example.demo.models.Category;
+import com.example.demo.models.Product;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,6 @@ public class ProductTest {
         assertEquals(true, product.getIsActive());
         assertEquals(5.1f, product.getPrice());
         assertEquals(0, product.getCategory().getId());
-        assertEquals(0, product.getCategory().getProduct().size());
     }
 
 
@@ -40,6 +39,5 @@ public class ProductTest {
         assertEquals(5.1f, product.getPrice());
         assertEquals(true, product.getIsActive());
         assertEquals(0, product.getCategory().getId());
-        assertEquals(0, product.getCategory().getProduct().size());
     }
 }

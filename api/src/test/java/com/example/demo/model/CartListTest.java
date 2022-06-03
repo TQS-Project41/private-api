@@ -1,13 +1,8 @@
 package com.example.demo.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.example.demo.Models.Address;
-import com.example.demo.Models.CartList;
-import com.example.demo.Models.ProductList;
-import com.example.demo.Models.UserAddress;
+import com.example.demo.models.CartList;
+import com.example.demo.models.ProductList;
 
 import org.junit.jupiter.api.Test;
 public class CartListTest {
