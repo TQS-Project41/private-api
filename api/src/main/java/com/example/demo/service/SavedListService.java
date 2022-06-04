@@ -3,9 +3,10 @@ package com.example.demo.service;
 import java.util.Optional;
 
 import com.example.demo.models.Product;
+import com.example.demo.models.ProductListItem;
 import com.example.demo.models.SavedList;
 import com.example.demo.models.User;
-import com.example.demo.repository.ProductListRepository;
+import com.example.demo.repository.ProductListItemRepository;
 import com.example.demo.repository.SavedListRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,9 @@ public class SavedListService {
   private SavedListRepository repository;
 
   @Autowired
-  private ProductListRepository productListRepository;
+  private ProductListItemRepository productListItemRepository;
 
   public SavedList save(SavedList list) {
-    list.setProductList(productListRepository.save(list.getProductList()));
     return repository.save(list);
   }
 
@@ -32,27 +32,40 @@ public class SavedListService {
     repository.delete(list);
   }
 
-  public boolean updateListItem(long id, Product product, int amount) {
-    return false;
+  public Optional<ProductListItem> updateListItem(SavedList list, Product product, int amount) {
+    Optional<ProductListItem> itemOptional = productListItemRepository.findByListIdAndProductId(list.getId(), product.getId());
+    ProductListItem item = null;
+
+    if (itemOptional.isPresent()) {
+      if (amount > 0) {
+        item = itemOptional.get();
+        item.setAmount(amount);
+      }
+      else
+        deleteListItem(itemOptional.get());
+
+    }
+    else if (amount > 0)
+      item = new ProductListItem(amount, list.getProductList(), product);
+    
+    if (item != null) {
+      productListItemRepository.save(item);
+      return Optional.of(item);
+    }
+    
+    return Optional.empty();
   }
 
-  public void deleteListItem(long id) {
-
+  public void deleteListItem(ProductListItem item) {
+    productListItemRepository.delete(item);
   }
 
-  public SavedList createFromList(long id, String name) {
-
-    return null;
-
-  }
-
-  public SavedList findById(long id) {
-    Optional<SavedList> savedList = repository.findById(id);
-    return savedList.isPresent() ? savedList.get() : null;
+  public Optional<SavedList> findById(long id) {
+    return repository.findById(id);
   }
 
   public Page<SavedList> findAll(User user, Pageable page) {
-    return null;
+    return repository.findByProductListUser(user, page);
   }
 
 }
