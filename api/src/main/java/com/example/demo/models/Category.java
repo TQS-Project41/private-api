@@ -1,14 +1,10 @@
-package com.example.demo.Models;
-
-import java.util.HashSet;
-import java.util.Set;
+package com.example.demo.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Table;
@@ -28,38 +24,13 @@ public class Category {
     @Column
     @NotNull(message = "IsActive é obrigatório")
     private boolean isActive;
-
-
-    @OneToMany(mappedBy="category")
-    private Set<Product> product;
     
     public Category() {
-        this.product= new HashSet<>();
     }
-
 
     public Category(String name, boolean isActive) {
         this.name = name;
         this.isActive = isActive;
-        this.product= new HashSet<>();
-    }
-    
-    
-    public Category( String name,
-             boolean isActive, Set<Product> product) {
-        this.name = name;
-        this.isActive = isActive;
-        this.product = product;
-    }
-
-
-    public Set<Product> getProduct() {
-        return product;
-    }
-
-
-    public void setProduct(Set<Product> product) {
-        this.product = product;
     }
 
 

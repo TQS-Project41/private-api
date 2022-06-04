@@ -1,7 +1,4 @@
-package com.example.demo.Models;
-
-import java.util.HashSet;
-import java.util.Set;
+package com.example.demo.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Table;
@@ -29,7 +25,7 @@ public class Product {
 
     @Column
     @NotNull(message = "name é obrigatório")
-    private double price;
+    private float price;
 
     @Column
     @NotNull(message = "Description é obrigatório")
@@ -39,39 +35,21 @@ public class Product {
     @NotNull(message = "IsActive é obrigatório")
     private Boolean isActive;
 
-    @OneToMany(mappedBy="product")
-    private Set<ProductListItem> productListItems;
-    
-    @OneToMany(mappedBy="product")
-    private Set<OrderProductItem> orderProductItem;
-
     @ManyToOne
     @JoinColumn(name="category_id", nullable=false)
     private Category category;
 
     
     public Product() {
-        this.productListItems= new HashSet<>();
-        this.orderProductItem= new HashSet<>();
     }
-
-
-   
     
-    public Product( String name,
-             double price,
-             String description,
-            Boolean isActive, Set<ProductListItem> productListItems,
-            Set<OrderProductItem> orderProductItem, Category category) {
+    public Product(String name, float price, String description, Boolean isActive, Category category) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.isActive = isActive;
-        this.productListItems = productListItems;
-        this.orderProductItem = orderProductItem;
         this.category = category;
     }
-
 
     public Long getId() {
         return id;
@@ -98,7 +76,7 @@ public class Product {
     }
 
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -122,29 +100,6 @@ public class Product {
         this.isActive = isActive;
     }
 
-
-    
-    
-    public Set<OrderProductItem> getOrderProductItem() {
-        return orderProductItem;
-    }
-
-
-    public void setOrderProductItem(Set<OrderProductItem> orderProductItem) {
-        this.orderProductItem = orderProductItem;
-    }
-
-
-    public Set<ProductListItem> getProductListItems() {
-        return productListItems;
-    }
-
-
-    public void setProductListItems(Set<ProductListItem> productListItems) {
-        this.productListItems = productListItems;
-    }
-
-
     public Category getCategory() {
         return category;
     }
@@ -153,7 +108,6 @@ public class Product {
     public void setCategory(Category category) {
         this.category = category;
     }
-
 
     @Override
     public String toString() {

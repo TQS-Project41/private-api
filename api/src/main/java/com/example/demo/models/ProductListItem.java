@@ -1,9 +1,8 @@
-package com.example.demo.Models;
+package com.example.demo.models;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -16,7 +15,7 @@ import javax.persistence.Table;
 public class ProductListItem {
    
     @EmbeddedId
-    private ProductListItemId id;
+    private ListItemId id;
 
     @Column
     @NotNull(message = "amount é obrigatório")
@@ -37,9 +36,8 @@ public class ProductListItem {
     }
     
     
-    public ProductListItem( int amount,
-            ProductList list, Product product) {
-        this.id = new ProductListItemId(product.getId(), list.getId());
+    public ProductListItem(int amount, ProductList list, Product product) {
+        this.id = new ListItemId(product.getId(), list.getId());
         this.amount = amount;
         this.list = list;
         this.product = product;
@@ -69,12 +67,12 @@ public class ProductListItem {
     }
 
 
-    public ProductListItemId getId() {
+    public ListItemId getId() {
         return id;
     }
 
 
-    public void setId(ProductListItemId id) {
+    public void setId(ListItemId id) {
         this.id = id;
     }
 

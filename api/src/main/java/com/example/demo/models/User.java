@@ -1,24 +1,24 @@
-package com.example.demo.Models;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+package com.example.demo.models;
 
-import javax.persistence.CascadeType;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Table;
 
 @Table(name="user")
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -26,94 +26,42 @@ public class User {
     @Column
     @NotNull(message = "email é obrigatório")
     private String email;
+
     @Column
     @NotNull(message = "name é obrigatório")
     private String name;
+    
     @Column
     @NotNull(message = "password é obrigatório")
     private String password;
 
     @Column
-    private Date birthday;
+    private LocalDate birthday;
 
     @Column
     @NotNull(message = "phoneNumber é obrigatório")
     private String phoneNumber;
 
-
     @Column
     @NotNull(message = "IsActive é obrigatório")
     private boolean isAdmin;
 
-
     @Column
-    @NotNull(message = "isStuff é obrigatório")
-    private boolean isStuff;
-
-
-    @OneToMany(mappedBy="user")
-    private Set<ProductList> productList;
-
-
-
-    @OneToMany(mappedBy="user")
-    private Set<UserAddress> userAddress;
-
+    @NotNull(message = "isStaff é obrigatório")
+    private boolean isStaff;
 
     public User() {
-        this.productList= new HashSet<>();
-        this.userAddress=new HashSet<>();
     }
 
-
-  
-
-    public User( String email,
-            String name,
-             String password, Date birthday,
-            String phoneNumber,
-             boolean isAdmin,
-             boolean isStuff, Set<ProductList> productList,
-            Set<UserAddress> userAddress) {
+    public User(String email, String name, String password, LocalDate birthday, String phoneNumber, boolean isAdmin, boolean isStaff) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.birthday = birthday;
         this.phoneNumber = phoneNumber;
         this.isAdmin = isAdmin;
-        this.isStuff = isStuff;
-        this.productList = productList;
-        this.userAddress = userAddress;
-    }
-
-
-
-
-    public Set<UserAddress> getUserAddress() {
-        return userAddress;
-    }
-
-
-
-
-    public void setUserAddress(Set<UserAddress> userAddress) {
-        this.userAddress = userAddress;
-    }
-
-
-
-
-    public Set<ProductList> getProductList() {
-        return productList;
-    }
-
-
-    public void setProductList(Set<ProductList> productList) {
-        this.productList = productList;
-    }
-
-
-    
+        this.isStaff = isStaff;
+    }  
 
 
     public long getId() {
@@ -156,12 +104,12 @@ public class User {
     }
 
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
@@ -186,16 +134,43 @@ public class User {
     }
 
 
-    public boolean getStuff() {
-        return isStuff;
+    public boolean getStaff() {
+        return isStaff;
     }
 
 
-    public void setStuff(boolean isStuff) {
-        this.isStuff = isStuff;
+    public void setStaff(boolean isStaff) {
+        this.isStaff = isStaff;
     }
 
-    
-    
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }  
     
 }

@@ -1,7 +1,4 @@
-package com.example.demo.Models;
-import java.sql.Date;
-import java.util.HashSet;
-import java.util.Set;
+package com.example.demo.models;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
@@ -30,28 +26,18 @@ public class Store {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id" , nullable = false)
     private Address address;
-
-
-    @OneToMany(mappedBy="store")
-    private Set<OrderList> orderList;
-    
     
     public Store() {
-        this.orderList= new HashSet<>();
     }
 
-
-    public Store(@NotNull(message = "name é obrigatório") String name, Address address, Set<OrderList> orderList) {
+    public Store(@NotNull(message = "name é obrigatório") String name, Address address) {
         this.name = name;
         this.address = address;
-        this.orderList = orderList;
     }
-
 
     public long getId() {
         return id;
     }
-
 
     public void setId(long id) {
         this.id = id;
@@ -67,33 +53,21 @@ public class Store {
         this.name = name;
     }
 
-
     public Address getAddress() {
         return address;
     }
-
 
     public void setAddress(Address address) {
         this.address = address;
     }
 
-
-    public Set<OrderList> getOrderList() {
-        return orderList;
-    }
-
-
-    public void setOrderList(Set<OrderList> orderList) {
-        this.orderList = orderList;
-    }
-
-
     @Override
     public String toString() {
-        return "Store [address=" + address + ", id=" + id + ", name=" + name + ", orderList=" + orderList + "]";
+        return "{" +
+            " id='" + getId() + "'" +
+            ", name='" + getName() + "'" +
+            ", address='" + getAddress() + "'" +
+            "}";
     }
-    
-    
-    
 
 }
