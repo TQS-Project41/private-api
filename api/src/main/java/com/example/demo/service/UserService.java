@@ -23,5 +23,9 @@ public class UserService {
     Optional<User> user = repository.findById(id);
     return user.isPresent() ? user.get() : null;
   }
+
+  public User getByEmailAndPassword(String email, String password) {
+    return repository.findByEmailAndPassword(email, password);
+  }
   
 }

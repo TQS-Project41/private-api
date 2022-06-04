@@ -5,7 +5,11 @@ import java.util.Optional;
 
 import com.example.demo.models.CartList;
 import com.example.demo.models.OrderList;
+import com.example.demo.models.Product;
 import com.example.demo.models.ProductList;
+import com.example.demo.models.ProductListItem;
+import com.example.demo.models.SavedList;
+import com.example.demo.models.User;
 import com.example.demo.repository.CartListRepository;
 import com.example.demo.repository.OrderListRepository;
 import com.example.demo.repository.ProductListRepository;
@@ -27,7 +31,7 @@ public class CartListService {
   private OrderListRepository orderListRepository;
 
   /* TODO Code created only for demonstration, mostly useless */
-  public CartList getCurrentCart() {
+  public CartList getCurrentCart(User user) {
     CartList currentCart = null;
 
     List<CartList> cartLists = repository.findAll();
@@ -43,6 +47,32 @@ public class CartListService {
     }
 
     return currentCart;
+  }
+
+  public boolean updateCartItem(User user, Product product, int amount) {
+
+    return false;
+
+  }
+
+  public List<ProductListItem> getCurrentCartItems(User user) {
+
+    return null;
+
+  }
+
+  public boolean addItemsFromSavedList(SavedList list) {
+
+    return false;
+
+  }
+
+  public void deleteCartItem(User user) {
+
+  }
+
+  public void cleanCart(User user) {
+
   }
 
 }

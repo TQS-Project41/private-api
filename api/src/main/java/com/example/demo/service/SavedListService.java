@@ -1,13 +1,16 @@
 package com.example.demo.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.models.Product;
 import com.example.demo.models.SavedList;
+import com.example.demo.models.User;
 import com.example.demo.repository.ProductListRepository;
 import com.example.demo.repository.SavedListRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -25,15 +28,31 @@ public class SavedListService {
     return repository.save(list);
   }
 
+  public void delete(SavedList list) {
+    repository.delete(list);
+  }
+
+  public boolean updateListItem(long id, Product product, int amount) {
+    return false;
+  }
+
+  public void deleteListItem(long id) {
+
+  }
+
+  public SavedList createFromList(long id, String name) {
+
+    return null;
+
+  }
+
   public SavedList findById(long id) {
-    /* TODO this should filter by the user authenticated */
     Optional<SavedList> savedList = repository.findById(id);
     return savedList.isPresent() ? savedList.get() : null;
   }
 
-  public List<SavedList> findAll() {
-    /* TODO this list should be filtered by the user authenticated */
-    return repository.findAll();
+  public Page<SavedList> findAll(User user, Pageable page) {
+    return null;
   }
 
 }

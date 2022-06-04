@@ -1,12 +1,13 @@
 package com.example.demo.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.models.Product;
 import com.example.demo.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 
@@ -25,8 +26,8 @@ public class ProductService {
     return product.isPresent() ? product.get() : null;
   }
 
-  public List<Product> getAll() {
-    return repository.findAll();
+  public Page<Product> getAll(Long categoryId, String query, Float minPrice, Float maxPrice, Pageable pageable) {
+    return null;
   }
 
 }
