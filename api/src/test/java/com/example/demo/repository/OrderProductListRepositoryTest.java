@@ -6,7 +6,7 @@ import com.example.demo.models.Address;
 import com.example.demo.models.Category;
 import com.example.demo.models.OrderList;
 import com.example.demo.models.OrderProductItem;
-import com.example.demo.models.OrderProductItemId;
+import com.example.demo.models.ListItemId;
 import com.example.demo.models.Product;
 import com.example.demo.models.ProductList;
 import com.example.demo.models.Store;
@@ -92,7 +92,7 @@ public class OrderProductListRepositoryTest {
 
     @Test
     void testWhenFindByInvalidId_thenReturnNull() {
-        Optional<OrderProductItem> res = rep.findById(new OrderProductItemId(-1L, -1L));
+        Optional<OrderProductItem> res = rep.findById(new ListItemId(-1L, -1L));
         assertThat(res).isNotPresent();
     }
     /* ------------------------------------------------- *
@@ -179,8 +179,6 @@ public class OrderProductListRepositoryTest {
         ProductList productList2 = new ProductList(user);
         OrderList orderList2 = new OrderList(productList2, address, store, 2L);
 
-        OrderProductItem item = new OrderProductItem(productPrice, orderList1, product);
-
         entityManager.persistAndFlush(category);
         entityManager.persistAndFlush(product);
         entityManager.persistAndFlush(user);
@@ -190,6 +188,9 @@ public class OrderProductListRepositoryTest {
         entityManager.persistAndFlush(orderList1);
         entityManager.persistAndFlush(productList2);
         entityManager.persistAndFlush(orderList2);
+
+        OrderProductItem item = new OrderProductItem(productPrice, orderList1, product);
+
         entityManager.persistAndFlush(item);
 
         assertEquals(1, rep.findByOrderListId(orderList1.getId()).size());

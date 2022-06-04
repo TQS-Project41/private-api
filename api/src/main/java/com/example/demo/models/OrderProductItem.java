@@ -15,7 +15,7 @@ import javax.persistence.Table;
 public class OrderProductItem {
     
     @EmbeddedId
-    private OrderProductItemId id;
+    private ListItemId id;
     
     @Column
     @NotNull(message = "price é obrigatório")
@@ -23,7 +23,7 @@ public class OrderProductItem {
 
     @ManyToOne
     @MapsId("orderListId")
-    @JoinColumn(name="orderList_id", nullable=false)
+    @JoinColumn(name="list_id", nullable=false)
     private OrderList orderList;
 
     @ManyToOne
@@ -36,9 +36,8 @@ public class OrderProductItem {
     public OrderProductItem() {
     }
     
-    public OrderProductItem( double price,
-            OrderList orderList, Product product) {
-        this.id = new OrderProductItemId(product.getId(),orderList.getId());
+    public OrderProductItem(double price, OrderList orderList, Product product) {
+        this.id = new ListItemId(product.getId(),orderList.getId());
         this.price = price;
         this.orderList = orderList;
         this.product = product;
@@ -66,11 +65,11 @@ public class OrderProductItem {
         this.product = product;
     }
 
-    public OrderProductItemId getId() {
+    public ListItemId getId() {
         return id;
     }
 
-    public void setId(OrderProductItemId id) {
+    public void setId(ListItemId id) {
         this.id = id;
     }
 

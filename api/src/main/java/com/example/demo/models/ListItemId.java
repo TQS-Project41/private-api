@@ -6,45 +6,54 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class OrderProductItemId implements Serializable {
+public class ListItemId implements Serializable {
+    
     @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "orderList_id")
-    private Long orderListId;
-
-    public OrderProductItemId() {
-    }
-
-    public OrderProductItemId(Long productId, Long orderListId) {
-        this.productId = productId;
-        this.orderListId = orderListId;
-    }
+    @Column(name = "list_id")
+    private Long listId;
     
+    
+    public ListItemId() {
+    }
+
+
+    public ListItemId(Long id, long id2) {
+        this.listId=id2;
+        this.productId=id;
+    }
+
+
     public Long getProductId() {
         return productId;
     }
+
 
     public void setProductId(Long productId) {
         this.productId = productId;
     }
 
-    public Long getOrderListId() {
-        return orderListId;
+
+    public Long getListId() {
+        return listId;
     }
 
-    public void setOrderListId(Long orderListId) {
-        this.orderListId = orderListId;
+
+    public void setListId(Long listId) {
+        this.listId = listId;
     }
+
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((orderListId == null) ? 0 : orderListId.hashCode());
+        result = prime * result + ((listId == null) ? 0 : listId.hashCode());
         result = prime * result + ((productId == null) ? 0 : productId.hashCode());
         return result;
     }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -54,11 +63,11 @@ public class OrderProductItemId implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OrderProductItemId other = (OrderProductItemId) obj;
-        if (orderListId == null) {
-            if (other.orderListId != null)
+        ListItemId other = (ListItemId) obj;
+        if (listId == null) {
+            if (other.listId != null)
                 return false;
-        } else if (!orderListId.equals(other.orderListId))
+        } else if (!listId.equals(other.listId))
             return false;
         if (productId == null) {
             if (other.productId != null)
@@ -67,6 +76,5 @@ public class OrderProductItemId implements Serializable {
             return false;
         return true;
     }
-
     
 }

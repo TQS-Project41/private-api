@@ -6,7 +6,7 @@ import com.example.demo.models.OrderList;
 import com.example.demo.models.Product;
 import com.example.demo.models.ProductList;
 import com.example.demo.models.ProductListItem;
-import com.example.demo.models.ProductListItemId;
+import com.example.demo.models.ListItemId;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.models.UserAddress;
@@ -92,7 +92,7 @@ public class ProductListItemRepositoryTest {
 
     @Test
     void testWhenFindByInvalidId_thenReturnNull() {
-        Optional<ProductListItem> res = rep.findById(new ProductListItemId(-1L, -1L));
+        Optional<ProductListItem> res = rep.findById(new ListItemId(-1L, -1L));
         assertThat(res).isNotPresent();
     }
     /* ------------------------------------------------- *

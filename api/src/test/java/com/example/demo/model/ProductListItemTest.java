@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.example.demo.models.Product;
 import com.example.demo.models.ProductList;
 import com.example.demo.models.ProductListItem;
-import com.example.demo.models.ProductListItemId;
+import com.example.demo.models.ListItemId;
 
 import org.junit.jupiter.api.Test;
 public class ProductListItemTest {
@@ -14,7 +14,7 @@ public class ProductListItemTest {
         list.setAmount(5);
         list.setProduct(new Product());
         list.setList(new ProductList());
-        list.setId(new ProductListItemId(1L, 1L)  );
+        list.setId(new ListItemId(1L, 1L)  );
         assertEquals(1L, list.getId().getListId());
         assertEquals(1L, list.getId().getProductId());
         assertEquals(5, list.getAmount());
