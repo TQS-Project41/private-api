@@ -44,10 +44,6 @@ public class OrderProductItem {
         this.product = product;
     }
 
-   
-
-    
-
     @Override
     public String toString() {
         return "OrderProductItem [id=" + id + ", orderList=" + orderList + ", price=" + price + ", product=" + product

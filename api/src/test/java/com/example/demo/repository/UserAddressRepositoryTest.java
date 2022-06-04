@@ -5,12 +5,11 @@ import javax.persistence.PersistenceException;
 import com.example.demo.models.Address;
 import com.example.demo.models.User;
 import com.example.demo.models.UserAddress;
-import com.example.demo.repository.UserAddressRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserAddressRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -52,7 +48,7 @@ public class UserAddressRepositoryTest {
     void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
         Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
         entityManager.persistAndFlush(address);
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
 
         UserAddress uA = new UserAddress(user, address);
@@ -73,19 +69,17 @@ public class UserAddressRepositoryTest {
 
     @Test
     void testGivenUserAddressAndFindByAll_thenReturnSameUserAddress() {
-        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
-        entityManager.persistAndFlush(address);
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
-        entityManager.persistAndFlush(user);
-
+        Address address = new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
+        address = entityManager.persistAndFlush(address);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
+        user = entityManager.persistAndFlush(user);
 
         UserAddress uA = new UserAddress(user, address);
         entityManager.persistAndFlush(uA);
 
-
         Address address1= new Address("Portugal", "1903-111", "Ovar", "Rua das Estia");
         entityManager.persistAndFlush(address1);
-        User user1 = new User("aaa@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "912321321", false, true);
+        User user1 = new User("aaa@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "912321321", false, true);
         entityManager.persistAndFlush(user1);
 
 
@@ -117,6 +111,24 @@ public class UserAddressRepositoryTest {
         assertThrows(PersistenceException.class, () -> {
             entityManager.persistAndFlush(x);
         });
+    }
+
+    @Test
+    void givenMultipleUserAddresses_whenFindByUser_thenReturnOnlyHisAddresses() {
+        Address address = new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
+        
+        User user1 = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
+        User user2 = new User("serras200020011@gmail.com", "Alexandre", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
+
+        UserAddress userAddress = new UserAddress(user1, address);
+        
+        entityManager.persistAndFlush(address);
+        entityManager.persistAndFlush(user1);
+        entityManager.persistAndFlush(user2);
+        entityManager.persistAndFlush(userAddress);
+
+        assertThat(rep.findByUser(user1)).hasSize(1);
+        assertThat(rep.findByUser(user2)).isEmpty();
     }
 
 }

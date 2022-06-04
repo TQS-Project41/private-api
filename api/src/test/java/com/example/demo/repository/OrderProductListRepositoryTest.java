@@ -12,12 +12,13 @@ import com.example.demo.models.ProductList;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.models.UserAddress;
-import com.example.demo.repository.OrderProductItemRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +38,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class OrderProductListRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -60,13 +58,13 @@ public class OrderProductListRepositoryTest {
     void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
         Store store = new Store();
         store.setName("puma");
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
         UserAddress userAddressTmp = new UserAddress(user, address);
         ProductList productListTmp = new ProductList();
         productListTmp.setUser(user);
-        Long deliveryTimestamp=111111111111L;
+        LocalDateTime deliveryTimestamp = LocalDateTime.of(2022, 10, 15, 19, 0);
         store.setAddress(address);
         Long deliveryId=1L;
         OrderList list = new OrderList(productListTmp, address, store, deliveryId, deliveryTimestamp);
@@ -92,10 +90,6 @@ public class OrderProductListRepositoryTest {
         assertThat(res).isPresent().contains(order);
     }
 
-
-
-
-
     @Test
     void testWhenFindByInvalidId_thenReturnNull() {
         Optional<OrderProductItem> res = rep.findById(new OrderProductItemId(-1L, -1L));
@@ -110,13 +104,13 @@ public class OrderProductListRepositoryTest {
     void testGivenAddressAndFindByAll_thenReturnSameAddress() {
         Store store = new Store();
         store.setName("puma");
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
         UserAddress userAddressTmp = new UserAddress(user, address);
         ProductList productListTmp = new ProductList();
         productListTmp.setUser(user);
-        Long deliveryTimestamp=111111111111L;
+        LocalDateTime deliveryTimestamp = LocalDateTime.of(2022, 10, 15, 19, 0);
         store.setAddress(address);
         Long deliveryId=1L;
         OrderList list = new OrderList(productListTmp, address, store, deliveryId, deliveryTimestamp);
@@ -169,6 +163,37 @@ public class OrderProductListRepositoryTest {
         });
     }
 
-    
+    @Test
+    void givenMultipleOrders_whenFindingItemsByOrderId_thenReturnOnlyItsItems() {
+        float productPrice = 14.78f;
+        Category category = new Category("Vegetais", true);
+        Product product = new Product("Couve-Flor", productPrice, "Saboroso", true, category);
+
+        User user = new User("pedro.dld@ua.pt", "Pedro Duarte", "password", LocalDate.of(2001, 11, 5), "249 311 804", true, true);
+        Address address = new Address("country", "zipcode", "city", "address");
+        Store store = new Store("Store", address);
+
+        ProductList productList1 = new ProductList(user);
+        OrderList orderList1 = new OrderList(productList1, address, store, 1L);
+
+        ProductList productList2 = new ProductList(user);
+        OrderList orderList2 = new OrderList(productList2, address, store, 2L);
+
+        OrderProductItem item = new OrderProductItem(productPrice, orderList1, product);
+
+        entityManager.persistAndFlush(category);
+        entityManager.persistAndFlush(product);
+        entityManager.persistAndFlush(user);
+        entityManager.persistAndFlush(address);
+        entityManager.persistAndFlush(store);
+        entityManager.persistAndFlush(productList1);
+        entityManager.persistAndFlush(orderList1);
+        entityManager.persistAndFlush(productList2);
+        entityManager.persistAndFlush(orderList2);
+        entityManager.persistAndFlush(item);
+
+        assertEquals(1, rep.findByOrderListId(orderList1.getId()).size());
+        assertEquals(0, rep.findByOrderListId(orderList2.getId()).size());
+    }
 
 }

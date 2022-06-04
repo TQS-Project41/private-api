@@ -1,8 +1,6 @@
 package com.example.demo.models;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,15 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Table(name="orderList")
 @Entity
@@ -34,9 +29,6 @@ public class OrderList {
     @JoinColumn(name = "productList_id")
     private ProductList productList;
 
-    @OneToMany(mappedBy="orderList")
-    private Set<OrderProductItem> orderProductItems;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id" , nullable = false)
     private Address address;
@@ -50,25 +42,25 @@ public class OrderList {
     private Long deliveryId;
 
     @Column(name = "delivery_timestamp")
-    @NotNull(message = "deliveryTimestamp é obrigatório")
-    private Long deliveryTimestamp;
+    private LocalDateTime deliveryTimestamp;
 
     @Column(updatable = false)
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date orderTimestamp;
+    private LocalDateTime orderTimestamp;
 
     public OrderList() {
-        this.orderProductItems = new HashSet<>();
     }
 
-    public OrderList(ProductList productList, Address address, Store store, Long deliveryId, Long deliveryTimestamp) {
+    public OrderList(ProductList productList, Address address, Store store, Long deliveryId, LocalDateTime deliveryTimestamp) {
         this.productList = productList;
         this.address = address;
         this.store = store;
         this.deliveryId = deliveryId;
         this.deliveryTimestamp = deliveryTimestamp;
-        this.orderProductItems = new HashSet<>();
+    }
+
+    public OrderList(ProductList productList, Address address, Store store, Long deliveryId) {
+        this(productList, address, store, deliveryId, null);
     }
 
     public ProductList getProductList() {
@@ -85,10 +77,6 @@ public class OrderList {
 
     public void setProductList(ProductList productList) {
         this.productList = productList;
-    }
-
-    public Set<OrderProductItem> getOrderProductItems() {
-        return this.orderProductItems;
     }
 
     public Address getAddress() {
@@ -115,20 +103,16 @@ public class OrderList {
         this.deliveryId = deliveryId;
     }
 
-    public Long getDeliveryTimestamp() {
+    public LocalDateTime getDeliveryTimestamp() {
         return this.deliveryTimestamp;
     }
 
-    public void setDeliveryTimestamp(Long deliveryTimestamp) {
+    public void setDeliveryTimestamp(LocalDateTime deliveryTimestamp) {
         this.deliveryTimestamp = deliveryTimestamp;
     }
 
-    public Date getOrderTimestamp() {
+    public LocalDateTime getOrderTimestamp() {
         return this.orderTimestamp;
-    }
-
-    public void setOrderTimestamp(Date orderTimestamp) {
-        this.orderTimestamp = orderTimestamp;
     }
     
 }

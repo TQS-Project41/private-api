@@ -4,12 +4,11 @@ import javax.persistence.PersistenceException;
 
 import com.example.demo.models.ProductList;
 import com.example.demo.models.User;
-import com.example.demo.repository.ProductListRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ProductListRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -49,7 +45,7 @@ public class ProductListRepositoryTest {
 
     @Test
     void testWhenCreateProductListAndFindById_thenReturnSameProductList() {
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         ProductList productListTmp = new ProductList();
         productListTmp.setUser(user);
@@ -73,13 +69,13 @@ public class ProductListRepositoryTest {
 
     @Test
     void testGivenProductListItemAndFindByAll_thenReturnSameProductListItem() {
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         ProductList productListTmp = new ProductList();
         productListTmp.setUser(user);
         entityManager.persistAndFlush(productListTmp);
 
-        User user1 = new User("ada@gmail.com", "Ser1111ras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user1 = new User("ada@gmail.com", "Ser1111ras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user1);
         ProductList productListTmp1 = new ProductList();
         productListTmp1.setUser(user1);

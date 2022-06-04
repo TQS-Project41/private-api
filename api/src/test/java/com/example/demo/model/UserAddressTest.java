@@ -1,7 +1,7 @@
 package com.example.demo.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.User;
@@ -14,7 +14,7 @@ public class UserAddressTest {
         User user = new User();
         user.setId(1);
         user.setEmail("alex200020011@gmail.com");
-        user.setBirthday(new Date(2000, 5, 28));
+        user.setBirthday(LocalDate.of(2000, 5, 28));
         user.setName("Serras");
         user.setPassword("aaaaa");
         user.setPhoneNumber("911912912");
@@ -38,7 +38,7 @@ public class UserAddressTest {
         user.setAdmin(false);
         user.setEmail("alex200020011@gmail.com");
         user.setId(1);
-        user.setBirthday(new Date(2000, 5, 28));
+        user.setBirthday(LocalDate.of(2000, 5, 28));
         user.setName("Serras");
         user.setPassword("aaaaa");
         user.setStaff(true);

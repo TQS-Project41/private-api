@@ -3,7 +3,6 @@ package com.example.demo.repository;
 import javax.validation.ConstraintViolationException;
 
 import com.example.demo.models.Category;
-import com.example.demo.repository.CategoryRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -27,10 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class CategoryRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {

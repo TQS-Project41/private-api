@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import javax.persistence.Table;
@@ -14,9 +15,10 @@ import javax.persistence.Table;
 public class UserAddress {
     @Id
     @Column(name = "address_id", nullable = false)
-    private Long addressId;
+    private long addressId;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
@@ -26,7 +28,6 @@ public class UserAddress {
 
     public UserAddress(User user, Address address) {
         this.user = user;
-        this.addressId = address.getId();
         this.address = address;
     }
 

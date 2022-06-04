@@ -13,7 +13,6 @@ public class ProductListTest {
         list.setUser(new User());
         assertEquals(1L, list.getId());
         assertEquals(0, list.getUser().getId());
-        assertEquals(0, list.getProductListItems().size());
     }
 
     @Test
@@ -21,9 +20,7 @@ public class ProductListTest {
         ProductList list = new ProductList(new User());
         list.setId(1L);
         assertEquals(1L, list.getId());
-        assertEquals(0, list.getUser().getId());
-        assertEquals(0, list.getProductListItems().size());
-        
+        assertEquals(0, list.getUser().getId());        
     }
 
 }

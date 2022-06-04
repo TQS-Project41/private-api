@@ -4,7 +4,6 @@ import javax.validation.ConstraintViolationException;
 
 import com.example.demo.models.Category;
 import com.example.demo.models.Product;
-import com.example.demo.repository.ProductRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
@@ -28,10 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ProductRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -103,6 +100,119 @@ public class ProductRepositoryTest {
         assertThrows(ConstraintViolationException.class, () -> {
             entityManager.persistAndFlush(x);
         });
+    }
+
+    @Test
+    void whenFilteringByNameAndMinPrice_thenReturnFilteredList () {
+
+        Category category1 = new Category("Vegetais", true);
+        Category category2 = new Category("Fruta", true);
+
+        Product product1 = new Product("Alface", 23.12f, "Gosto", true, category1);
+        Product product2 = new Product("Cenoura", 9.11f, "Laranja", true, category1);
+        Product product3 = new Product("Tomate", 12.32f, "Avermelhado", true, category1);
+        Product product4 = new Product("Banana", 3.12f, "Gosto", true, category2);
+        Product product5 = new Product("Pêra Rocha", 3.20f, "Bom e barato", true, category2);
+        Product product6 = new Product("Maçã de Alcobaça", 5.99f, "Goat", true, category2);
+
+        entityManager.persistAndFlush(category1);
+        entityManager.persistAndFlush(category2);
+
+        entityManager.persistAndFlush(product1);
+        entityManager.persistAndFlush(product2);
+        entityManager.persistAndFlush(product3);
+        entityManager.persistAndFlush(product4);
+        entityManager.persistAndFlush(product5);
+        entityManager.persistAndFlush(product6);
+
+        assertThat(rep.findByNameContainsAndPriceGreaterThan("", 6, Pageable.unpaged())).containsExactly(product1, product2, product3);
+        assertThat(rep.findByNameContainsAndPriceGreaterThan("Al", 5, Pageable.unpaged())).containsExactly(product1, product6);
+
+    }
+
+    @Test
+    void whenFilteringByNameAndMinPriceAndMaxPrice_thenReturnFilteredList () {
+
+        Category category1 = new Category("Vegetais", true);
+        Category category2 = new Category("Fruta", true);
+
+        Product product1 = new Product("Alface", 23.12f, "Gosto", true, category1);
+        Product product2 = new Product("Cenoura", 9.11f, "Laranja", true, category1);
+        Product product3 = new Product("Tomate", 12.32f, "Avermelhado", true, category1);
+        Product product4 = new Product("Banana", 3.12f, "Gosto", true, category2);
+        Product product5 = new Product("Pêra Rocha", 3.20f, "Bom e barato", true, category2);
+        Product product6 = new Product("Maçã de Alcobaça", 5.99f, "Goat", true, category2);
+
+        entityManager.persistAndFlush(category1);
+        entityManager.persistAndFlush(category2);
+
+        entityManager.persistAndFlush(product1);
+        entityManager.persistAndFlush(product2);
+        entityManager.persistAndFlush(product3);
+        entityManager.persistAndFlush(product4);
+        entityManager.persistAndFlush(product5);
+        entityManager.persistAndFlush(product6);
+
+        assertThat(rep.findByNameContainsAndPriceBetween("", 6, 20, Pageable.unpaged())).containsExactly(product2, product3);
+        assertThat(rep.findByNameContainsAndPriceBetween("Al", 5, 20, Pageable.unpaged())).containsExactly(product6);
+
+    }
+
+    @Test
+    void whenFilteringByCategoryAndNameAndMinPrice_thenReturnFilteredList () {
+
+        Category category1 = new Category("Vegetais", true);
+        Category category2 = new Category("Fruta", true);
+
+        Product product1 = new Product("Alface", 23.12f, "Gosto", true, category1);
+        Product product2 = new Product("Cenoura", 9.11f, "Laranja", true, category1);
+        Product product3 = new Product("Tomate", 12.32f, "Avermelhado", true, category1);
+        Product product4 = new Product("Banana", 3.12f, "Gosto", true, category2);
+        Product product5 = new Product("Pêra Rocha", 3.20f, "Bom e barato", true, category2);
+        Product product6 = new Product("Maçã de Alcobaça", 5.99f, "Goat", true, category2);
+
+        entityManager.persistAndFlush(category1);
+        entityManager.persistAndFlush(category2);
+
+        entityManager.persistAndFlush(product1);
+        entityManager.persistAndFlush(product2);
+        entityManager.persistAndFlush(product3);
+        entityManager.persistAndFlush(product4);
+        entityManager.persistAndFlush(product5);
+        entityManager.persistAndFlush(product6);
+
+        assertThat(rep.findByCategoryIdAndNameContainsAndPriceGreaterThan(category2.getId(), "", 4, Pageable.unpaged())).containsExactly(product6);
+        assertThat(rep.findByCategoryIdAndNameContainsAndPriceGreaterThan(category1.getId(), "Al", 5, Pageable.unpaged())).containsExactly(product1);
+
+    }
+
+    @Test
+    void whenFilteringByCategoryAndNameAndMinPriceAndMaxPrice_thenReturnFilteredList () {
+
+        Category category1 = new Category("Vegetais", true);
+        Category category2 = new Category("Fruta", true);
+
+        Product product1 = new Product("Alface", 23.12f, "Gosto", true, category1);
+        Product product2 = new Product("Cenoura", 9.11f, "Laranja", true, category1);
+        Product product3 = new Product("Tomate", 12.32f, "Avermelhado", true, category1);
+        Product product4 = new Product("Banana", 3.12f, "Gosto", true, category2);
+        Product product5 = new Product("Pêra Rocha", 3.20f, "Bom e barato", true, category2);
+        Product product6 = new Product("Maçã de Alcobaça", 5.99f, "Goat", true, category2);
+
+        entityManager.persistAndFlush(category1);
+        entityManager.persistAndFlush(category2);
+
+        entityManager.persistAndFlush(product1);
+        entityManager.persistAndFlush(product2);
+        entityManager.persistAndFlush(product3);
+        entityManager.persistAndFlush(product4);
+        entityManager.persistAndFlush(product5);
+        entityManager.persistAndFlush(product6);
+
+
+        assertThat(rep.findByCategoryIdAndNameContainsAndPriceBetween(category1.getId(), "", 0, 15, Pageable.unpaged())).containsExactly(product2, product3);
+        assertThat(rep.findByCategoryIdAndNameContainsAndPriceBetween(category1.getId(), "Al", 5, 20, Pageable.unpaged())).isEmpty();
+
     }
 
 }

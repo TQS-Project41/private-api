@@ -3,12 +3,11 @@ package com.example.demo.repository;
 import javax.validation.ConstraintViolationException;
 
 import com.example.demo.models.User;
-import com.example.demo.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,10 +27,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -48,7 +44,7 @@ public class UserRepositoryTest {
 
     @Test
     void testWhenCreateCartListAndFindById_thenReturnSameCartList() {        
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         Optional<User> res = rep.findById(user.getId());
         assertThat(res).isPresent().contains(user);
@@ -67,10 +63,10 @@ public class UserRepositoryTest {
     @Test
     void testGivenAddressAndFindByAll_thenReturnSameAddress() {
         
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         
-        User user1 = new User("alex20002001sdad1@gmail.com", "Serrdas", "aaasadaa", new Date(2000, 5, 28), "911912912", false, true);
+        User user1 = new User("alex20002001sdad1@gmail.com", "Serrdas", "aaasadaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user1);
 
 
@@ -95,10 +91,19 @@ public class UserRepositoryTest {
 
     @Test
     void testWhenCreateInvalidUserAndFindById_thenReturnException() {
-        User  x = new User();
+        User x = new User();
         assertThrows(ConstraintViolationException.class, () -> {
             entityManager.persistAndFlush(x);
         });
+    }
+
+    @Test
+    void whenFindingUserByEmailAndPassword_thenReturnOneOrNull() {
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
+        entityManager.persistAndFlush(user);
+
+        assertThat(rep.findByEmailAndPassword("alex200020011@gmail.com", "aaaaa")).isEqualTo(user);
+        assertThat(rep.findByEmailAndPassword("alex200020011@gmail.com", "bbbbb")).isNull();
     }
 
    
