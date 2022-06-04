@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.repository.CartListRepository;
-import com.example.demo.service.CartListService;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

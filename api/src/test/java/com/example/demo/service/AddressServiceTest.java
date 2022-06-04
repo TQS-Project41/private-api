@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import com.example.demo.models.Address;
 import com.example.demo.repository.AddressRepository;
-import com.example.demo.service.AddressService;
 
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;

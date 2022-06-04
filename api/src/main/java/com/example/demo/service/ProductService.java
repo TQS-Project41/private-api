@@ -21,13 +21,23 @@ public class ProductService {
     return repository.save(product);
   }
 
-  public Product getById(long id) {
-    Optional<Product> product = repository.findById(id);
-    return product.isPresent() ? product.get() : null;
+  public Optional<Product> getById(long id) {
+    return repository.findById(id);
   }
 
   public Page<Product> getAll(Long categoryId, String query, Float minPrice, Float maxPrice, Pageable pageable) {
-    return null;
+    Page<Product> page;
+
+    if (categoryId == null && maxPrice == null)
+      page = repository.findByNameContainsAndPriceGreaterThan(query, minPrice, pageable);
+    else if (categoryId == null)
+      page = repository.findByNameContainsAndPriceBetween(query, minPrice, maxPrice, pageable);
+    else if (maxPrice == null)
+      page = repository.findByCategoryIdAndNameContainsAndPriceGreaterThan(categoryId, query, minPrice, pageable);
+    else
+      page = repository.findByCategoryIdAndNameContainsAndPriceBetween(categoryId, query, minPrice, maxPrice, pageable);
+
+    return page;
   }
 
 }
