@@ -144,7 +144,7 @@
 	<dependency>
 		<groupId>org.apache.httpcomponents</groupId>
 		<artifactId>httpclient</artifactId>
-		<version>4.5.10</version>
+		<version>4.5.13</version>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
 	<dependency>
@@ -189,6 +189,11 @@
 			<artifactId>mysql</artifactId>
 			<version>1.17.2</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 	</dependencies>
 

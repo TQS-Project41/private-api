@@ -1,4 +1,4 @@
-package com.example.demo.Models;
+package com.example.demo.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,9 +8,11 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Table(name="cartList")
+import org.springframework.beans.factory.annotation.Value;
+
+@Table(name="savedList")
 @Entity
-public class CartList {
+public class SavedList {
     @Id
     @Column(name = "productList_id")
     private Long id;
@@ -21,24 +23,52 @@ public class CartList {
     @JoinColumn(name = "productList_id")
     private ProductList productList;
 
+    @Column
+    @Value("")
+    private String name;
 
-    public CartList() {
+    public SavedList() {
     }
 
 
-    public CartList(ProductList productList) {
+    
+
+
+    public SavedList(ProductList productList, String name) {
         this.productList = productList;
+        this.name = name;
     }
+
+
+
 
 
     public ProductList getProductList() {
         return productList;
+    }
+    
+
+    public Long getId() {
+        return id;
+    }
+
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 
     public void setProductList(ProductList productList) {
         this.productList = productList;
     }
-
-    
 }

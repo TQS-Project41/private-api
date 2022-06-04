@@ -1,51 +1,39 @@
 package com.example.demo.repository;
-import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolationException;
 
-import com.example.demo.Models.Address;
-import com.example.demo.Models.CartList;
-import com.example.demo.Models.ProductList;
-import com.example.demo.Models.User;
-import com.example.demo.Models.UserAddress;
-import com.example.demo.Repository.AddressRepository;
-import com.example.demo.Repository.CartListRepository;
-import com.example.demo.Repository.ProductListRepository;
-import com.example.demo.Repository.UserRepository;
+import javax.persistence.PersistenceException;
+
+import com.example.demo.models.CartList;
+import com.example.demo.models.Category;
+import com.example.demo.models.Product;
+import com.example.demo.models.ProductList;
+import com.example.demo.models.ProductListItem;
+import com.example.demo.models.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
-import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class CartListRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -57,8 +45,6 @@ public class CartListRepositoryTest {
     @Autowired
     private CartListRepository rep;
 
-    
-
     @Autowired
     private TestEntityManager entityManager;
 
@@ -66,9 +52,7 @@ public class CartListRepositoryTest {
     void testWhenCreateCartListAndFindById_thenReturnSameCartList() {
         CartList x = new CartList();
         ProductList list = new ProductList();
-        Set<ProductList> productList = new HashSet<>();
-        Set<UserAddress> userAddress=new HashSet<>();
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true, productList, userAddress);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         list.setUser(user);
         entityManager.persistAndFlush(list);
@@ -83,10 +67,50 @@ public class CartListRepositoryTest {
         Optional<CartList> res = rep.findById(-1L);
         assertThat(res).isNotPresent();
     }
-    /* ------------------------------------------------- *
-     * FIND TESTS                                  *
-     * ------------------------------------------------- *
-     */
+
+    @Test
+    void testGivenMultipleCartLists_WhenFindLastByUser_thenReturnLastUserCartList() {
+        User user1 = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
+        User user2 = new User("serras200020011@gmail.com", "Alexandre", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
+        
+        ProductList list1 = new ProductList(user1);
+        ProductList list2 = new ProductList(user1);
+        ProductList list3 = new ProductList(user2);
+
+        Category category1 = new Category("Vegetais", true);
+        Product product1 = new Product("Banana", 2.21f, "Não é vegetal mas come-se", true, category1);
+        ProductListItem item1 = new ProductListItem(3, list1, product1);
+
+        CartList cartList1 = new CartList(list1);
+        CartList cartList2 = new CartList(list2);
+        CartList cartList3 = new CartList(list3);
+
+        entityManager.persistAndFlush(user1);
+        entityManager.persistAndFlush(user2);
+
+        entityManager.persistAndFlush(list1);
+        entityManager.persistAndFlush(list2);
+        entityManager.persistAndFlush(list3);
+
+        entityManager.persistAndFlush(category1);
+        entityManager.persistAndFlush(product1);
+        entityManager.persistAndFlush(item1);
+
+        entityManager.persistAndFlush(cartList1);
+
+        CartList lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1);
+        assertEquals(cartList1.getProductList().getId(), lastCart.getProductList().getId());
+
+        entityManager.persistAndFlush(cartList2);
+
+        lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1);
+        assertEquals(cartList2.getProductList().getId(), lastCart.getProductList().getId());
+
+        entityManager.persistAndFlush(cartList3);
+
+        lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1);
+        assertEquals(cartList2.getProductList().getId(), lastCart.getProductList().getId());
+    }
 
     @Test
     void testGivenAddressAndFindByAll_thenReturnSameAddress() {
@@ -96,9 +120,7 @@ public class CartListRepositoryTest {
         ProductList list = new ProductList();
         ProductList list2 = new ProductList();
 
-        Set<ProductList> productList = new HashSet<>();
-        Set<UserAddress> userAddress=new HashSet<>();
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true, productList, userAddress);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
         list.setUser(user);
         list2.setUser(user);
@@ -107,10 +129,6 @@ public class CartListRepositoryTest {
         x2.setProductList(list2);
         entityManager.persistAndFlush(x);
         entityManager.persistAndFlush(x2);
-
-
-
-
 
         List<CartList> all = rep.findAll();
 

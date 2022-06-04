@@ -1,63 +1,43 @@
 package com.example.demo.repository;
 
-import com.example.demo.Repository.ProductListItemRepository;
-import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolationException;
+import com.example.demo.models.Address;
+import com.example.demo.models.Category;
+import com.example.demo.models.OrderList;
+import com.example.demo.models.Product;
+import com.example.demo.models.ProductList;
+import com.example.demo.models.ProductListItem;
+import com.example.demo.models.ListItemId;
+import com.example.demo.models.Store;
+import com.example.demo.models.User;
+import com.example.demo.models.UserAddress;
 
-import com.example.demo.Models.Address;
-import com.example.demo.Models.CartList;
-import com.example.demo.Models.Category;
-import com.example.demo.Models.OrderList;
-import com.example.demo.Models.OrderProductItem;
-import com.example.demo.Models.OrderProductItemId;
-import com.example.demo.Models.Product;
-import com.example.demo.Models.ProductList;
-import com.example.demo.Models.ProductListItem;
-import com.example.demo.Models.ProductListItemId;
-import com.example.demo.Models.Store;
-import com.example.demo.Models.User;
-import com.example.demo.Models.UserAddress;
-import com.example.demo.Repository.AddressRepository;
-import com.example.demo.Repository.CartListRepository;
-import com.example.demo.Repository.CategoryRepository;
-import com.example.demo.Repository.OrderProductItemRepository;
-import com.example.demo.Repository.ProductListRepository;
-import com.example.demo.Repository.UserRepository;
+import javax.persistence.PersistenceException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Date;
-import java.util.HashSet;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ProductListItemRepositoryTest {
     @Container
-    public static MySQLContainer container = new MySQLContainer()
-        .withUsername("user")
-        .withPassword("user")
-        .withDatabaseName("tqs_final_41");
+    public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -77,21 +57,16 @@ public class ProductListItemRepositoryTest {
     void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
         Store store = new Store();
         store.setName("puma");
-        Set<ProductList> productList = new HashSet<>();
-        Set<UserAddress> userAddress=new HashSet<>();
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true, productList, userAddress);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
-        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas", store);
+        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
         UserAddress userAddressTmp = new UserAddress(user, address);
-        Set<OrderProductItem> orderProductItem=new HashSet<>();
         ProductList productListTmp = new ProductList();
         productListTmp.setUser(user);
-        Set<OrderProductItem> productListItems=new HashSet<>();
-        Long deliveryTimestamp=111111111111L;
+        LocalDateTime deliveryTimestamp = LocalDateTime.of(2022, 10, 15, 19, 0);
         store.setAddress(address);
         Long deliveryId=1L;
-        OrderList list = new OrderList(productListTmp, orderProductItem, address, store, deliveryId, deliveryTimestamp);
-        list.setProductListItems(productListItems);
+        OrderList list = new OrderList(productListTmp, address, store, deliveryId, deliveryTimestamp);
         entityManager.persistAndFlush(user);
         entityManager.persistAndFlush(store);
         entityManager.persistAndFlush(address);
@@ -99,13 +74,9 @@ public class ProductListItemRepositoryTest {
         entityManager.persistAndFlush(productListTmp);
         entityManager.persistAndFlush(list);
 
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
+        Category cat = new Category("Vegetais", false);
         
-        Set<OrderProductItem> orderProductItem1= new HashSet();
-        Set<ProductListItem> productListItems1= new HashSet();
-        Product product = new Product("Pilhas", 5.1, "leve", true, productListItems1, orderProductItem1, cat);
-        x.add(product);
+        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
         
         entityManager.persistAndFlush(cat);
         entityManager.persistAndFlush(product);
@@ -119,13 +90,9 @@ public class ProductListItemRepositoryTest {
         assertThat(res).isPresent().contains(order);
     }
 
-
-
-
-
     @Test
     void testWhenFindByInvalidId_thenReturnNull() {
-        Optional<ProductListItem> res = rep.findById(new ProductListItemId(-1L, -1L));
+        Optional<ProductListItem> res = rep.findById(new ListItemId(-1L, -1L));
         assertThat(res).isNotPresent();
     }
     /* ------------------------------------------------- *
@@ -138,21 +105,16 @@ public class ProductListItemRepositoryTest {
     void testGivenProductListItemAndFindByAll_thenReturnSameProductListItem() {
         Store store = new Store();
         store.setName("puma");
-        Set<ProductList> productList = new HashSet<>();
-        Set<UserAddress> userAddress=new HashSet<>();
-        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", new Date(2000, 5, 28), "911912912", false, true, productList, userAddress);
+        User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
-        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas", store);
+        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
         UserAddress userAddressTmp = new UserAddress(user, address);
-        Set<OrderProductItem> orderProductItem=new HashSet<>();
         ProductList productListTmp = new ProductList();
         productListTmp.setUser(user);
-        Set<OrderProductItem> productListItems=new HashSet<>();
-        Long deliveryTimestamp=111111111111L;
+        LocalDateTime deliveryTimestamp = LocalDateTime.of(2022, 10, 15, 19, 0);
         store.setAddress(address);
         Long deliveryId=1L;
-        OrderList list = new OrderList(productListTmp, orderProductItem, address, store, deliveryId, deliveryTimestamp);
-        list.setProductListItems(productListItems);
+        OrderList list = new OrderList(productListTmp, address, store, deliveryId, deliveryTimestamp);
         entityManager.persistAndFlush(user);
         entityManager.persistAndFlush(store);
         entityManager.persistAndFlush(address);
@@ -160,20 +122,10 @@ public class ProductListItemRepositoryTest {
         entityManager.persistAndFlush(productListTmp);
         entityManager.persistAndFlush(list);
 
-        Set<Product> x = new HashSet();
-        Category cat = new Category("Vegetais", false, x);
-        
-        Set<OrderProductItem> orderProductItem1= new HashSet();
-        Set<ProductListItem> productListItems1= new HashSet();
-        Set<OrderProductItem> orderProductItem12= new HashSet();
-        Set<ProductListItem> productListItems12= new HashSet();
+        Category cat = new Category("Vegetais", false);
 
-        Product product = new Product("Pilhas", 5.1, "leve", true, productListItems1, orderProductItem1, cat);
-        Product product2 = new Product("Pilhas reciclaveis", 12, "leve", true, productListItems12, orderProductItem12, cat);
-       
-       
-        x.add(product);
-        x.add(product2);
+        Product product = new Product("Pilhas", 5.1f, "leve", true, cat);
+        Product product2 = new Product("Pilhas reciclaveis", 12, "leve", true, cat);
         
         entityManager.persistAndFlush(cat);
         entityManager.persistAndFlush(product);
@@ -212,5 +164,69 @@ public class ProductListItemRepositoryTest {
         assertThrows(PersistenceException.class, () -> {
             entityManager.persistAndFlush(x);
         });
+    }
+
+    @Test
+    void givenMultipleLists_whenFindingItemsByListId_thenReturnOnlyItsItems() {
+        float productPrice = 14.78f;
+        Category category = new Category("Vegetais", true);
+        Product product = new Product("Couve-Flor", productPrice, "Saboroso", true, category);
+
+        User user = new User("pedro.dld@ua.pt", "Pedro Duarte", "password", LocalDate.of(2001, 11, 5), "249 311 804", true, true);
+        Address address = new Address("country", "zipcode", "city", "address");
+        Store store = new Store("Store", address);
+
+        ProductList productList1 = new ProductList(user);
+        ProductList productList2 = new ProductList(user);
+
+        ProductListItem item = new ProductListItem(5, productList1, product);
+
+        entityManager.persistAndFlush(category);
+        entityManager.persistAndFlush(product);
+        entityManager.persistAndFlush(user);
+        entityManager.persistAndFlush(address);
+        entityManager.persistAndFlush(store);
+        entityManager.persistAndFlush(productList1);
+        entityManager.persistAndFlush(productList2);
+        entityManager.persistAndFlush(item);
+
+        assertThat(rep.findByListId(productList1.getId())).hasSize(1);
+        assertThat(rep.findByListId(productList2.getId())).isEmpty();
+    }
+
+    @Test
+    void givenMultipleListsAndItems_whenFindingItemsByListItemAndProductId_thenReturnOnlyOneItem() {
+        float productPrice = 14.78f;
+        Category category = new Category("Vegetais", true);
+        
+        Product product1 = new Product("Couve-Flor", productPrice, "Saboroso", true, category);
+        Product product2 = new Product("Alface", productPrice, "Nem tanto", true, category);
+
+        User user = new User("pedro.dld@ua.pt", "Pedro Duarte", "password", LocalDate.of(2001, 11, 5), "249 311 804", true, true);
+        Address address = new Address("country", "zipcode", "city", "address");
+        Store store = new Store("Store", address);
+
+        ProductList productList1 = new ProductList(user);
+        ProductList productList2 = new ProductList(user);
+
+        ProductListItem item1 = new ProductListItem(15, productList1, product1);
+        ProductListItem item2 = new ProductListItem(1, productList1, product2);
+        ProductListItem item3 = new ProductListItem(3, productList2, product1);
+
+        entityManager.persistAndFlush(category);
+        entityManager.persistAndFlush(product1);
+        entityManager.persistAndFlush(product2);
+        entityManager.persistAndFlush(user);
+        entityManager.persistAndFlush(address);
+        entityManager.persistAndFlush(store);
+        entityManager.persistAndFlush(productList1);
+        entityManager.persistAndFlush(productList2);
+        entityManager.persistAndFlush(item1);
+        entityManager.persistAndFlush(item2);
+        entityManager.persistAndFlush(item3);
+
+        assertThat(rep.findByListIdAndProductId(productList1.getId(), product1.getId()).getAmount()).isEqualTo(15);
+        assertThat(rep.findByListIdAndProductId(productList1.getId(), product2.getId()).getAmount()).isEqualTo(1);
+        assertThat(rep.findByListIdAndProductId(productList2.getId(), product1.getId()).getAmount()).isEqualTo(3);
     }
 }
