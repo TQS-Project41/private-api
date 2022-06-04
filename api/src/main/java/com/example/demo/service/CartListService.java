@@ -1,14 +1,14 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.Models.CartList;
-import com.example.demo.Models.OrderList;
-import com.example.demo.Models.ProductList;
-import com.example.demo.Repository.CartListRepository;
-import com.example.demo.Repository.OrderListRepository;
-import com.example.demo.Repository.ProductListRepository;
+import com.example.demo.models.CartList;
+import com.example.demo.models.OrderList;
+import com.example.demo.models.ProductList;
+import com.example.demo.repository.CartListRepository;
+import com.example.demo.repository.OrderListRepository;
+import com.example.demo.repository.ProductListRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

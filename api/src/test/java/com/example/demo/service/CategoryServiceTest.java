@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.Models.Category;
-import com.example.demo.Repository.CategoryRepository;
-import com.example.demo.Service.CategoryService;
+import com.example.demo.models.Category;
+import com.example.demo.repository.CategoryRepository;
+import com.example.demo.service.CategoryService;
 
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;

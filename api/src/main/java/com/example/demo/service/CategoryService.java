@@ -1,9 +1,9 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import java.util.List;
 
-import com.example.demo.Models.Category;
-import com.example.demo.Repository.CategoryRepository;
+import com.example.demo.models.Category;
+import com.example.demo.repository.CategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

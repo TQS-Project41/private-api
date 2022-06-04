@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.Repository.SavedListRepository;
-import com.example.demo.Service.SavedListService;
+import com.example.demo.repository.SavedListRepository;
+import com.example.demo.service.SavedListService;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.Optional;
 
-import com.example.demo.Models.Address;
-import com.example.demo.Repository.AddressRepository;
-import com.example.demo.Service.AddressService;
+import com.example.demo.models.Address;
+import com.example.demo.repository.AddressRepository;
+import com.example.demo.service.AddressService;
 
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;

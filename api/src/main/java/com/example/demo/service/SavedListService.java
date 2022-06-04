@@ -1,11 +1,11 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.Models.SavedList;
-import com.example.demo.Repository.ProductListRepository;
-import com.example.demo.Repository.SavedListRepository;
+import com.example.demo.models.SavedList;
+import com.example.demo.repository.ProductListRepository;
+import com.example.demo.repository.SavedListRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
