@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.demo.models.ProductListItem;
 import com.example.demo.models.ListItemId;
@@ -14,6 +15,6 @@ public interface ProductListItemRepository extends JpaRepository<ProductListItem
 
   public List<ProductListItem> findByListId(Long productListId);
 
-  public ProductListItem findByListIdAndProductId(Long productListId, Long productId);
+  public Optional<ProductListItem> findByListIdAndProductId(Long productListId, Long productId);
   
 }

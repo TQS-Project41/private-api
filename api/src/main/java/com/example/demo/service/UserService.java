@@ -19,12 +19,11 @@ public class UserService {
     return repository.save(user);
   }
 
-  public User getById(long id) {
-    Optional<User> user = repository.findById(id);
-    return user.isPresent() ? user.get() : null;
+  public Optional<User> getById(long id) {
+    return repository.findById(id);
   }
 
-  public User getByEmailAndPassword(String email, String password) {
+  public Optional<User> getByEmailAndPassword(String email, String password) {
     return repository.findByEmailAndPassword(email, password);
   }
   
