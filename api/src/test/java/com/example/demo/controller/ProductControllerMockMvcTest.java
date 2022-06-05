@@ -1,14 +1,7 @@
 package com.example.demo.controller;
 
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,42 +20,18 @@ import com.example.demo.models.Product;
 import com.example.demo.service.ProductService;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.example.demo.config.WebSecurityConfig;
-import com.example.demo.models.Category;
 import com.example.demo.service.CategoryService;
-import com.example.demo.service.ProductService;
 import static org.hamcrest.Matchers.*;
 import org.springframework.context.annotation.FilterType;
 
 import io.restassured.http.ContentType;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 @WebMvcTest(value = ProductController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
