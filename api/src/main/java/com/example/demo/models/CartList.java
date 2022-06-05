@@ -30,15 +30,20 @@ public class CartList {
         this.productList = productList;
     }
 
-
-    public ProductList getProductList() {
-        return productList;
+    public Long getId() {
+        return this.id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public ProductList getProductList() {
+        return this.productList;
+    }
 
     public void setProductList(ProductList productList) {
         this.productList = productList;
     }
-
     
 }
