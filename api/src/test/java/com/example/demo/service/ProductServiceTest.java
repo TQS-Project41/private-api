@@ -42,9 +42,18 @@ public class ProductServiceTest {
     Mockito.when(repository.save(product1)).thenReturn(product4);
     Mockito.when(repository.findById(1L)).thenReturn(Optional.of(product1));
     Mockito.when(repository.findById(10L)).thenReturn(Optional.empty());
-    
+
     Mockito.when(repository.findByNameContainsAndPriceGreaterThan("", 0, pageable))
-      .thenReturn(new PageImpl<>(Arrays.asList(product1, product2, product3), pageable, 3));
+        .thenReturn(new PageImpl<>(Arrays.asList(product1, product2, product3), pageable, 3));
+
+    Mockito.when(repository.findByNameContainsAndPriceBetween("", 0, 20, pageable))
+        .thenReturn(new PageImpl<>(Arrays.asList(product1, product2, product3), pageable, 3));
+
+    Mockito.when(repository.findByCategoryIdAndNameContainsAndPriceGreaterThan(1L, "", 0, pageable))
+        .thenReturn(new PageImpl<>(Arrays.asList(product1, product2, product3), pageable, 3));
+
+    Mockito.when(repository.findByCategoryIdAndNameContainsAndPriceBetween(1L, "", 0, 20, pageable))
+        .thenReturn(new PageImpl<>(Arrays.asList(product1, product2, product3), pageable, 3));
   }
 
   @Test
@@ -69,6 +78,27 @@ public class ProductServiceTest {
     assertThat(service.getAll(null, "", 0f, null, pageable).toList()).containsExactly(product1, product2, product3);
 
     Mockito.verify(repository, VerificationModeFactory.times(1)).findByNameContainsAndPriceGreaterThan("", 0, pageable);
+  }
+
+  @Test
+  public void whenGettingAllProductsWithPriceFilter_thenReturnProductsList() {
+    assertThat(service.getAll(null, "", 0f, 20f, pageable).toList()).containsExactly(product1, product2, product3);
+
+    Mockito.verify(repository, VerificationModeFactory.times(1)).findByNameContainsAndPriceBetween("", 0, 20, pageable);
+  }
+
+  @Test
+  public void whenGettingAllProductsWithCategoryFilter_thenReturnProductsList() {
+    assertThat(service.getAll(1L, "", 0f, null, pageable).toList()).containsExactly(product1, product2, product3);
+
+    Mockito.verify(repository, VerificationModeFactory.times(1)).findByCategoryIdAndNameContainsAndPriceGreaterThan(1L, "", 0, pageable);
+  }
+
+  @Test
+  public void whenGettingAllProductsWithCategoryAndPriceFilter_thenReturnProductsList() {
+    assertThat(service.getAll(1L, "", 0f, 20f, pageable).toList()).containsExactly(product1, product2, product3);
+
+    Mockito.verify(repository, VerificationModeFactory.times(1)).findByCategoryIdAndNameContainsAndPriceBetween(1L, "", 0, 20, pageable);
   }
 
 }
