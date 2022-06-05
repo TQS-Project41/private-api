@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.models.CartList;
-import com.example.demo.models.OrderList;
 import com.example.demo.models.Product;
 import com.example.demo.models.ProductList;
 import com.example.demo.models.ProductListItem;
@@ -12,6 +11,7 @@ import com.example.demo.models.SavedList;
 import com.example.demo.models.User;
 import com.example.demo.repository.CartListRepository;
 import com.example.demo.repository.OrderListRepository;
+import com.example.demo.repository.ProductListItemRepository;
 import com.example.demo.repository.ProductListRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,50 +28,85 @@ public class CartListService {
   private ProductListRepository productListRepository;
 
   @Autowired
+  private ProductListItemRepository productListItemRepository;
+
+  @Autowired
   private OrderListRepository orderListRepository;
 
-  /* TODO Code created only for demonstration, mostly useless */
   public CartList getCurrentCart(User user) {
-    CartList currentCart = null;
+    Optional<CartList> cartOptional = repository.findFirstByProductListUserOrderByIdDesc(user);
+    CartList cart = null;
 
-    List<CartList> cartLists = repository.findAll();
+    if (cartOptional.isPresent()) {
+      cart = cartOptional.get();
 
-    if (!cartLists.isEmpty()) {
-      CartList cartList = cartLists.get(cartLists.size()-1);
-      Optional<OrderList> orderList =  orderListRepository.findById(cartList.getProductList().getId());
-      if (orderList.isEmpty()) currentCart = cartList;
+      // Ignore last cart if it is already an order
+      if (orderListRepository.findById(cart.getProductList().getId()).isPresent())
+        cart = null;
     }
 
-    if (currentCart == null) {
-      currentCart = repository.save(new CartList(productListRepository.save(new ProductList())));
+    if (cart == null) {
+      ProductList list = new ProductList(user);
+      cart = new CartList(list);
+
+      productListRepository.save(list);
+      repository.save(cart);
     }
 
-    return currentCart;
+    return cart;
   }
 
-  public boolean updateCartItem(User user, Product product, int amount) {
+  public Optional<ProductListItem> updateCartItem(User user, Product product, int amount) {    
+    CartList cart = getCurrentCart(user);
 
-    return false;
+    Optional<ProductListItem> itemOptional = productListItemRepository.findByListIdAndProductId(cart.getId(), product.getId());
+    ProductListItem item = null;
 
+    if (itemOptional.isPresent()) {
+      if (amount > 0) {
+        item = itemOptional.get();
+        item.setAmount(amount);
+      } else
+        deleteListItem(itemOptional.get());
+
+    } else if (amount > 0)
+      item = new ProductListItem(amount, cart.getProductList(), product);
+
+    if (item != null) {
+      productListItemRepository.save(item);
+      return Optional.of(item);
+    }
+
+    return Optional.empty();
+  }
+
+  public void deleteListItem(ProductListItem item) {
+    productListItemRepository.delete(item);
   }
 
   public List<ProductListItem> getCurrentCartItems(User user) {
 
-    return null;
+    CartList cart = getCurrentCart(user);
+
+    return productListItemRepository.findByListId(cart.getId());
 
   }
 
-  public boolean addItemsFromSavedList(SavedList list) {
+  public List<ProductListItem> addItemsFromSavedList(User user, SavedList list) {
 
-    return false;
+    List<ProductListItem> items = productListItemRepository.findByListId(list.getId());
 
-  }
+    for (ProductListItem item : items) {
+      updateCartItem(user, item.getProduct(), item.getAmount());
+    }
 
-  public void deleteCartItem(User user) {
+    return getCurrentCartItems(user);
 
   }
 
   public void cleanCart(User user) {
+
+    productListItemRepository.deleteAll(getCurrentCartItems(user));
 
   }
 

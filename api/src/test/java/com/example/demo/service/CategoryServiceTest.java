@@ -56,7 +56,7 @@ public class CategoryServiceTest {
   @Test
   public void whenSavingValidCategory_thenReturnsCategoryWithId() {    
     assertThat(category1.getId()).isZero();
-    assertThat(repository.save(category1).getId()).isNotZero();
+    assertThat(service.save(category1).getId()).isNotZero();
 
     Mockito.verify(repository, VerificationModeFactory.times(1)).save(category1);
   }

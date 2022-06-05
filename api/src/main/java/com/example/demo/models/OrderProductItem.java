@@ -30,14 +30,12 @@ public class OrderProductItem {
     @MapsId("productId")
     @JoinColumn(name="product_id", nullable=false)
     private Product product;
-
-    
     
     public OrderProductItem() {
     }
     
     public OrderProductItem(double price, OrderList orderList, Product product) {
-        this.id = new ListItemId(product.getId(),orderList.getId());
+        this.id = new ListItemId(product.getId(), orderList.getId());
         this.price = price;
         this.orderList = orderList;
         this.product = product;
@@ -80,6 +78,5 @@ public class OrderProductItem {
     public void setOrderList(OrderList orderList) {
         this.orderList = orderList;
     }
-
     
 }
