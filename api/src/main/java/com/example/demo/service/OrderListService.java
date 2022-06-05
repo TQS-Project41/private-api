@@ -5,14 +5,19 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.models.Address;
+import com.example.demo.models.CartList;
 import com.example.demo.models.OrderList;
 import com.example.demo.models.OrderProductItem;
+import com.example.demo.models.ProductListItem;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.repository.OrderListRepository;
 import com.example.demo.repository.OrderProductItemRepository;
+import com.example.demo.repository.ProductListItemRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -26,35 +31,40 @@ public class OrderListService {
   private OrderProductItemRepository orderProductItemRepository;
 
   @Autowired
+  private ProductListItemRepository productListItemRepository;
+
+  @Autowired
   private CartListService cartListService;
 
-  public OrderList findById(Long id) {
-    Optional<OrderList> orderList = repository.findById(id);
-    return orderList.isPresent() ? orderList.get() : null;
+  public Optional<OrderList> findById(Long id) {
+    return repository.findById(id);
   }
 
-  public List<OrderList> findAll(User user) {
-
-    return null;
-
+  public Page<OrderList> findAll(User user, Pageable page) {
+    return repository.findByProductListUser(user, page);
   }
 
-  public List<OrderList> findAll(Store store) {
-
-    return null;
-
+  public Page<OrderList> findAll(Store store, Pageable page) {
+    return repository.findByStoreId(store.getId(), page);
   }
 
   public List<OrderProductItem> getAllOrderItems(Long orderId) {
-
-    return null;
-
+    return orderProductItemRepository.findByOrderListId(orderId);
   }
 
   public OrderList createFromCart(User user, Address address, Store store, Long deliveryId, LocalDateTime deliveryTimestamp) {
+    CartList cart = cartListService.getCurrentCart(user);
 
-    return null;
+    OrderList order = new OrderList(cart.getProductList(), address, store, deliveryId, deliveryTimestamp);
+    repository.save(order);
 
+    List<ProductListItem> items = productListItemRepository.findByListId(order.getId());
+
+    for (ProductListItem item : items) {
+      orderProductItemRepository.save(new OrderProductItem(item.getProduct().getPrice(), order, item.getProduct()));
+    }
+
+    return order;
   }
 
 }
