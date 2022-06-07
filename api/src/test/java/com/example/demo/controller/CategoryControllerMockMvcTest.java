@@ -1,13 +1,7 @@
 package com.example.demo.controller;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +14,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-import com.example.demo.config.WebSecurityConfig;
 import com.example.demo.models.Category;
+import com.example.demo.security.AuthTokenFilter;
+import com.example.demo.security.JwtUtils;
+import com.example.demo.security.WebSecurityConfig;
 import com.example.demo.service.CategoryService;
-import com.example.demo.service.ProductService;
 import static org.hamcrest.Matchers.*;
 import org.springframework.context.annotation.FilterType;
 
@@ -45,8 +35,11 @@ public class CategoryControllerMockMvcTest {
     @MockBean
     private CategoryService categoryService;
 
-   
+    @MockBean
+    private JwtUtils jwtUtils;
 
+    @MockBean
+    private AuthTokenFilter authTokenFilter;
 
     @BeforeEach
     void setUp()  {

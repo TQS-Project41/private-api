@@ -11,6 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.Store;
+import com.example.demo.security.AuthTokenFilter;
+import com.example.demo.security.JwtUtils;
+import com.example.demo.security.WebSecurityConfig;
 import com.example.demo.service.StoreService;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -20,7 +23,6 @@ import java.util.List;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.example.demo.config.WebSecurityConfig;
 import com.example.demo.service.AddressService;
 import static org.hamcrest.Matchers.*;
 import org.springframework.context.annotation.FilterType;
@@ -39,6 +41,11 @@ public class StoreControllerMockMvcTest {
     @MockBean
     private AddressService addressService;
 
+    @MockBean
+    private JwtUtils jwtUtils;
+
+    @MockBean
+    private AuthTokenFilter authTokenFilter;
     
     @BeforeEach
     void setUp()  {

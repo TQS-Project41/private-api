@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,8 +36,7 @@ public class ProductController {
 
     @GetMapping("product")
     public Page<Product> getProducts() {
-        Page<Product> ret = service.getAll(null, null, null, null, Pageable.unpaged());
-        return ret;
+        return service.getAll(null, "", 0f, null, Pageable.unpaged());
     }
 
     @PostMapping("product")
@@ -81,6 +81,25 @@ public class ProductController {
     public ResponseEntity<Product> putProduct(@PathVariable int id,
     @RequestParam(required = false)  String name,@RequestParam(required = false)  String description
     , @RequestParam (defaultValue="-1",required = false) float price, @RequestParam(defaultValue = "-1",required = false) int category ) {
+        // Optional<Product> productOptional = service.getById(id);
+        
+        // if (!productOptional.isPresent()) 
+        //     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        // Product product = productOptional.get();
+
+        // if (name != null) product.setName(name);
+        // if (description != null) product.setDescription(description);
+        // if (price >= 0) product.setPrice(price);
+
+        // if (category > 0) {
+        //     Optional<Category> categoryOptional = catService.getById(category);
+
+        //     if (!productOptional.isPresent())
+        //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        // }
+        
+        
         if (category != -1){
           List<Category> a = catService.getAll();
         

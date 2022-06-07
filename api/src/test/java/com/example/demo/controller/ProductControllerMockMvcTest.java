@@ -17,6 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.models.Category;
 import com.example.demo.models.Product;
+import com.example.demo.security.AuthTokenFilter;
+import com.example.demo.security.JwtUtils;
+import com.example.demo.security.WebSecurityConfig;
 import com.example.demo.service.ProductService;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -26,7 +29,6 @@ import java.util.List;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.example.demo.config.WebSecurityConfig;
 import com.example.demo.service.CategoryService;
 import static org.hamcrest.Matchers.*;
 import org.springframework.context.annotation.FilterType;
@@ -44,6 +46,12 @@ public class ProductControllerMockMvcTest {
 
     @MockBean
     private CategoryService categoryService;
+
+    @MockBean
+    private JwtUtils jwtUtils;
+
+    @MockBean
+    private AuthTokenFilter authTokenFilter;
     
     @BeforeEach
     void setUp()  {
@@ -58,7 +66,7 @@ public class ProductControllerMockMvcTest {
                 .get("/products/product")
                 .then()
                 .statusCode(200);
-                verify(productService, times(1)).getAll(null, null, null, null, Pageable.unpaged() );
+                verify(productService, times(1)).getAll(null, "", 0f, null, Pageable.unpaged() );
 
             }
 
@@ -69,7 +77,7 @@ public class ProductControllerMockMvcTest {
         Product p2 = new Product("cebola",1.5f,"colhidas hoje",true,a);
         Pageable pageable = Pageable.unpaged();
         Page<Product> ret= new PageImpl<>(Arrays.asList(p1, p2), pageable, 2);
-        when(productService.getAll(null, null, null, null, Pageable.unpaged())).thenReturn(ret);
+        when(productService.getAll(null, "", 0f, null, Pageable.unpaged())).thenReturn(ret);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -78,7 +86,7 @@ public class ProductControllerMockMvcTest {
                 .then()
                 .statusCode(200).and().
                 body("content.name", hasItems("tomate","cebola"));
-                verify(productService, times(1)).getAll(null, null, null, null, Pageable.unpaged() );
+                verify(productService, times(1)).getAll(null, "", 0f, null, Pageable.unpaged() );
 
             }
     
