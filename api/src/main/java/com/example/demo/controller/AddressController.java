@@ -15,14 +15,34 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.Store;
+import com.example.demo.models.User;
 import com.example.demo.service.AddressService;
 import com.example.demo.service.StoreService;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/addresses")
 public class AddressController {
     @Autowired
     private AddressService addressService;
+
+
+    @GetMapping("address/")
+    public ResponseEntity<List<Address>> getAddress(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        List<Address> ret = addressService.getAllByUser(user);
+        return new ResponseEntity<>(ret, HttpStatus.OK);    
+    }
+
+    @PostMapping("address/")
+    public ResponseEntity<Address> postAddress(Authentication authentication, @RequestParam String country,@RequestParam String zipcode,
+            @RequestParam String city,@RequestParam String address) {
+        User user = (User) authentication.getPrincipal();
+        Address ret = new Address(country, zipcode, city, address);
+        addressService.save(ret);
+        return new ResponseEntity<>(ret, HttpStatus.CREATED);    
+    }
+
 
     @GetMapping("address/{id}")
     public ResponseEntity<Address> getAddress(@PathVariable int id) {
