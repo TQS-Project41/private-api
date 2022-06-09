@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.User;
+import com.example.demo.models.UserAddress;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.UserAddressRepository;
 
@@ -34,7 +35,7 @@ public class AddressService {
     return null;
   }
 
-  public List<Address> createUserAddress(User user, Address address) {
+  public Optional<UserAddress> createUserAddress(User user, Address address) {
     return null;
   }
   
