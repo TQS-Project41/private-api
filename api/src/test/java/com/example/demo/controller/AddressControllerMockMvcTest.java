@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,18 @@ public class AddressControllerMockMvcTest {
     }
 
     @Test
+    void testGetAddressbyInvalidUser_thenReturnNotFound(){
+        when(userService.getAuthenticatedUser()).thenReturn(Optional.of(null));
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .get("/addresses/")
+                .then()
+                .statusCode(404);
+             
+    }
+
+    @Test
     void testGetAddressbyUser_thenReturnAddress(){
         Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
         address2.setId(1L);
@@ -73,15 +86,10 @@ public class AddressControllerMockMvcTest {
 
         User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
         
-
+        when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
         when(addressService.getAllByUser(user)).thenReturn(ret);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-              user,
-              null,
-              Arrays.asList());
-        when(securityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
-        
 
+        
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -89,8 +97,10 @@ public class AddressControllerMockMvcTest {
                 .get("/addresses/")
                 .then()
                 .statusCode(200).and().
-                body("city", equalTo("Aveiro")).
-                body("address", equalTo("Rua das Estia"));
+                body("[0].city", equalTo("Aveiro")).
+                body("[1].city", equalTo("Aveiro")).
+                body("[1].address", equalTo("Rua das Estia")).
+                body("[0].address", equalTo("Rua daEstia"));
                 verify(addressService, times(1)).getAllByUser(user);
     }
 

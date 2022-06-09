@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 import java.util.List;
-
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +18,8 @@ import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.service.AddressService;
 import com.example.demo.service.StoreService;
+import com.example.demo.service.UserService;
+
 import org.springframework.security.core.Authentication;
 
 @RestController
@@ -26,10 +28,15 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
+    @Autowired
+    private UserService userService;
+
 
     @GetMapping("")
-    public ResponseEntity<List<Address>> getAddress(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public ResponseEntity<List<Address>> getAddress() {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
         List<Address> ret = addressService.getAllByUser(user);
         return new ResponseEntity<>(ret, HttpStatus.OK);    
     }
