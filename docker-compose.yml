@@ -18,11 +18,11 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
-      
+
   api:
     depends_on:
-      db:
-        condition: service_healthy
+      - db:
+          condition: service_healthy
     build: ./api/
     env_file: ./.env
     environment:
