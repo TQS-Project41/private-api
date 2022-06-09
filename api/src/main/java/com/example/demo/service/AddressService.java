@@ -33,5 +33,9 @@ public class AddressService {
   public List<Address> getAllByUser(User user) {
     return null;
   }
+
+  public List<Address> createUserAddress(User user, Address address) {
+    return null;
+  }
   
 }
