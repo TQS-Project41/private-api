@@ -1,4 +1,7 @@
 package com.example.demo.controller;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,14 +54,15 @@ public class OrderController {
     
     @PostMapping("")
     public ResponseEntity<OrderList> postOrders(Authentication authentication,@RequestParam int store
-        ,@RequestParam int address ) {
+        ,@RequestParam int address ,@RequestParam String deliveryTimestamp) {
         User user = (User) authentication.getPrincipal();
         Address getAddress = addressService.getById(address);
         if (getAddress == null ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         Store getStore = storeService.getById(store);
         if (getStore == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         //NEED HELP NESTE ENDPOINT
-        //orderListService.createFromCart(user, address, store, deliveryId, deliveryTimestamp)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        orderListService.createFromCart(user, getAddress, getStore, 0L, LocalDateTime.parse(deliveryTimestamp, formatter));
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
@@ -73,7 +77,7 @@ public class OrderController {
         return new ResponseEntity<>(ret_final,HttpStatus.OK);
     }
 
-    /* 
+    /* PEDIR À GENERICA
     @DeleteMapping("/{id}")
     public ResponseEntity<OrderList> deleteByID( @PathVariable long id) {
 

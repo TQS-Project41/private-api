@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.models.Address;
 import com.example.demo.models.OrderList;
 import com.example.demo.models.Product;
+import com.example.demo.models.ProductList;
 import com.example.demo.models.ProductListItem;
 import com.example.demo.models.SavedList;
 import com.example.demo.models.Store;
@@ -39,10 +40,6 @@ public class StoredController {
     private ProductService service;
 
     @Autowired
-    private StoreService storeService;
-
-
-    @Autowired
     private SavedListService savedListService;
 
 
@@ -53,18 +50,19 @@ public class StoredController {
 
     }
 
-    /* 
+    
     @PostMapping("")
     public Page<SavedList> postStored(Authentication authentication,@RequestParam String name) {
         User user = (User) authentication.getPrincipal();
         
+        ProductList productList = new ProductList(user);
         // no ideia de qual lista ir buscar estou semi perido
         savedListService.save(new SavedList(productList, name));
         return savedListService.findAll(user, Pageable.unpaged());
 
     }
 
-    */
+    
     @GetMapping("/{id}")
     public ResponseEntity<SavedList> getOrdersByID( @PathVariable long id) {
         Optional<SavedList> ret = savedListService.findById(id);
@@ -75,11 +73,11 @@ public class StoredController {
        
         return new ResponseEntity<>(ret_final,HttpStatus.OK);
     }
-    /* 
+    
 
     @PostMapping("/{id}")
-    public ResponseEntity<SavedList> postByID( @PathVariable long id,
-    @RequestParam int product,@RequestParam int amout) {
+    public ResponseEntity<ProductListItem> postByID( @PathVariable long id,
+    @RequestParam int product,@RequestParam int amount) {
 
         Optional<SavedList> ret = savedListService.findById(id);
 
@@ -89,15 +87,15 @@ public class StoredController {
         Optional<Product> productOptional = service.getById(product);
         if (!productOptional.isPresent())   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        Product product_final = productOptional.get();
+        Optional<ProductListItem> product_final = savedListService.updateListItem(ret_final, productOptional.get(), amount);
 
-        savedListService.save( new SavedList(productList, name))
+        savedListService.save(ret_final);
        
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(product_final.get(),HttpStatus.OK);
     }
-    */
+    
 
-    @DeleteMapping("/order/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<SavedList> deleteByID( @PathVariable long id) {
 
         Optional<SavedList> ret = savedListService.findById(id);

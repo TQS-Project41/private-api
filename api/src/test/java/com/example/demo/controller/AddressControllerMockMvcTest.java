@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import static org.mockito.Mockito.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.User;
@@ -52,7 +54,6 @@ public class AddressControllerMockMvcTest {
         RestAssuredMockMvc.mockMvc(mvc);
     }
 
-    /*
     @Test
     void testGetAddressbyUser_thenReturnAddress(){
         Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
@@ -69,7 +70,8 @@ public class AddressControllerMockMvcTest {
         
 
         when(addressService.getAllByUser(user)).thenReturn(ret);
-        when((User) authentication.getPrincipal()).thenReturn(address2);
+        when((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(user);
+        
 
 
         RestAssuredMockMvc.given()
@@ -82,7 +84,6 @@ public class AddressControllerMockMvcTest {
                 body("address", equalTo("Rua das Estia"));
                 verify(addressService, times(1)).getById(1);
     }
-     */
 
     @Test
     void testGetAddressbyId_thenReturnAddress(){
