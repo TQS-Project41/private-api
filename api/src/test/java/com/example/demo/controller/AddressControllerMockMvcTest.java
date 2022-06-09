@@ -2,10 +2,6 @@ package com.example.demo.controller;
 
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +10,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.security.core.Authentication;
 
 import com.example.demo.models.Address;
-import com.example.demo.models.User;
 import com.example.demo.security.AuthTokenFilter;
 import com.example.demo.security.JwtUtils;
 import com.example.demo.security.WebSecurityConfig;
@@ -75,7 +69,7 @@ public class AddressControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/addresses/address/{id}",1)
+                .get("/addresses/{id}",1)
                 .then()
                 .statusCode(200).and().
                 body("city", equalTo("Aveiro")).
@@ -94,7 +88,7 @@ public class AddressControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/addresses/address/{id}",1)
+                .get("/addresses/{id}",1)
                 .then()
                 .statusCode(200).and().
                 body("city", equalTo("Aveiro")).
@@ -112,7 +106,7 @@ public class AddressControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/addresses/address/{id}",2)
+                .get("/addresses/{id}",2)
                 .then()
                 .statusCode(400);
                 verify(addressService, times(0)).getById(1);

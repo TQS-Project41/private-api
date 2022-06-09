@@ -63,7 +63,7 @@ public class ProductControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/products/product")
+                .get("/products")
                 .then()
                 .statusCode(200);
                 verify(productService, times(1)).getAll(null, "", 0f, null, Pageable.unpaged() );
@@ -82,7 +82,7 @@ public class ProductControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/products/product")
+                .get("/products")
                 .then()
                 .statusCode(200).and().
                 body("content.name", hasItems("tomate","cebola"));
@@ -102,7 +102,7 @@ public class ProductControllerMockMvcTest {
 
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().post("/products/product?name=tomate&description=frescos&price=5.0&category=0").then().assertThat().statusCode(201).and().
+        .when().post("/products?name=tomate&description=frescos&price=5.0&category=0").then().assertThat().statusCode(201).and().
         body("name", equalTo("tomate")).and()
         .body("isActive", equalTo(true));
         verify(productService, times(1)).save(Mockito.any());
@@ -118,7 +118,7 @@ public class ProductControllerMockMvcTest {
 
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().post("/products/product?name=tomate&description=frescos&price=5.0&category=1").then().assertThat().statusCode(404);
+        .when().post("/products?name=tomate&description=frescos&price=5.0&category=1").then().assertThat().statusCode(404);
         verify(productService, times(0)).save(Mockito.any());
 
     }
@@ -134,7 +134,7 @@ public class ProductControllerMockMvcTest {
 
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().get("/products/product/{id}",1).then().assertThat().statusCode(200).and().
+        .when().get("/products/{id}",1).then().assertThat().statusCode(200).and().
         body("name", equalTo("tomate")).and()
         .body("isActive", equalTo(true));
         verify(productService, times(1)).getById(1);
@@ -151,7 +151,7 @@ public class ProductControllerMockMvcTest {
 
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().get("/products/product/{id}",0).then().assertThat().statusCode(404);
+        .when().get("/products/{id}",0).then().assertThat().statusCode(404);
     }
 
     @Test
@@ -165,7 +165,7 @@ public class ProductControllerMockMvcTest {
 
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().delete("/products/product/{id}",0).then().assertThat().statusCode(404);
+        .when().delete("/products/{id}",0).then().assertThat().statusCode(404);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class ProductControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(lst);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().delete("/products/product/{id}",1).then().assertThat().statusCode(200).and().
+        .when().delete("/products/{id}",1).then().assertThat().statusCode(200).and().
         body("name", equalTo("tomate")).and()
         .body("isActive", equalTo(false));
         verify(productService, times(1)).getById(1);
@@ -194,7 +194,7 @@ public class ProductControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(lst);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().put("/products/product/{id}?name=aaa",1).then().assertThat().statusCode(200).and().
+        .when().put("/products/{id}?name=aaa",1).then().assertThat().statusCode(200).and().
         body("name", equalTo("aaa")).and()
         .body("isActive", equalTo(true));
         verify(productService, times(1)).getById(1);
@@ -210,7 +210,7 @@ public class ProductControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(lst);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().put("/products/product/{id}?name=aaa",0).then().assertThat().statusCode(404);
+        .when().put("/products/{id}?name=aaa",0).then().assertThat().statusCode(404);
         verify(productService, times(0)).getById(1);
     }
     @Test
@@ -227,7 +227,7 @@ public class ProductControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(lst);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().put("/products/product/{id}?name=aaa&category=1",1).then().assertThat().statusCode(200).and().
+        .when().put("/products/{id}?name=aaa&category=1",1).then().assertThat().statusCode(200).and().
         body("name", equalTo("aaa")).and().
         body("category.id", equalTo(1)).and().
         body("category.name", equalTo("fruta")).and()
@@ -251,7 +251,7 @@ public class ProductControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(lst);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().put("/products/product/{id}?name=aaa&category=2",1).then().assertThat().statusCode(404);
+        .when().put("/products/{id}?name=aaa&category=2",1).then().assertThat().statusCode(404);
         verify(productService, times(0)).getById(1);
 
   }

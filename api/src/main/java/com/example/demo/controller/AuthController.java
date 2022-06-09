@@ -33,13 +33,13 @@ public class AuthController {
   @Value("${coviran.app.jwtExpirationMs}")
   private int jwtExpirationMs;
 
-  @PostMapping("/register")
+  @PostMapping("register")
   public ResponseEntity<User> register(@RequestBody UserDto user) {
     User registered = userService.save(new User(user.getEmail(), user.getName(), user.getPassword(), user.getBirthday(), user.getPhoneNumber(), false, false));
     return new ResponseEntity<>(registered, HttpStatus.CREATED);
   }
 
-  @PostMapping("/login")
+  @PostMapping("login")
   public ResponseEntity<Map<String, String>> login(@RequestParam String email, @RequestParam String password) {
     Optional<User> user = userService.getByEmailAndPassword(email, password);
 

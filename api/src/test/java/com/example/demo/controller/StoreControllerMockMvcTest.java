@@ -68,7 +68,7 @@ public class StoreControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/stores/store")
+                .get("/stores")
                 .then()
                 .statusCode(200).and().
                 body("[0].name", equalTo("Puma")).
@@ -89,7 +89,7 @@ public class StoreControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .post("/stores/store?name=Puma&country=Portugal&zipcode=1201-222&city=Aveiro&address=Rua das Estia")
+                .post("/stores?name=Puma&country=Portugal&zipcode=1201-222&city=Aveiro&address=Rua das Estia")
                 .then()
                 .statusCode(201).and().
                 body("name", equalTo("Puma")).
@@ -109,7 +109,7 @@ public class StoreControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .post("/stores/store?country=Portugal&zipcode=1201-222&city=Aveiro&address=Rua das Estia")
+                .post("/stores?country=Portugal&zipcode=1201-222&city=Aveiro&address=Rua das Estia")
                 .then()
                 .statusCode(400);
     }
@@ -126,7 +126,7 @@ public class StoreControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/stores/store/{id}",1)
+                .get("/stores/{id}",1)
                 .then()
                 .statusCode(200).and().
                 body("address.city", equalTo("Aveiro")).
@@ -145,7 +145,7 @@ public class StoreControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/stores/store/{id}",2)
+                .get("/stores/{id}",2)
                 .then()
                 .statusCode(400);
                 verify(storeService, times(0)).getById(1);
@@ -162,7 +162,7 @@ public class StoreControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .put("/stores/store/{id}?name=aaaa",2)
+                .put("/stores/{id}?name=aaaa",2)
                 .then()
                 .statusCode(400);
                 verify(storeService, times(0)).getById(1);
@@ -179,7 +179,7 @@ public class StoreControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .put("/stores/store/{id}?name=puma",1)
+                .put("/stores/{id}?name=puma",1)
                 .then()
                 .statusCode(200).and().
                 body("name", equalTo("puma"));

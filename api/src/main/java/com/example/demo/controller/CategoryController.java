@@ -18,20 +18,19 @@ import com.example.demo.models.Category;
 import com.example.demo.service.CategoryService;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("categories")
 public class CategoryController {
     
     @Autowired
     private CategoryService service;
 
-    @GetMapping("category")
+    @GetMapping("")
     public ResponseEntity<List<Category>> getCategories() {
         List<Category> ret = service.getAll();
-        System.out.println(ret);
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PostMapping("category")
+    @PostMapping("")
     public ResponseEntity<Category> createCategory(@RequestParam String name) {
         List<Category> tmp = service.getAll();
         for (Category x : tmp){
@@ -43,7 +42,7 @@ public class CategoryController {
         return new ResponseEntity<>(ret, HttpStatus.CREATED);
     }
 
-    @PutMapping("category/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable int id,@RequestParam String name) {
         List<Category> tmp = service.getAll();
         boolean verify=true;
@@ -67,10 +66,9 @@ public class CategoryController {
     }
 
 
-    @DeleteMapping("category/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Category> deleteCategory(@PathVariable int id) {
         List<Category> tmp = service.getAll();
-        boolean verify=true;
         Category ret =null;
         for (Category x : tmp){
             if (x.getId() ==    id ){

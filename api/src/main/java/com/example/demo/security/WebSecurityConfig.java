@@ -24,9 +24,9 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/products/product*").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/categories/category").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/stores/store*").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/product*").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/category").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/store*").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
