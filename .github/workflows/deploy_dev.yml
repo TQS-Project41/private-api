@@ -1,0 +1,12 @@
+name: Continuous Delivery 4 Test Environment (private)
+
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, dev]
+    steps:
+      - uses: actions/checkout@v1
+      - run: sh test_private.sh
