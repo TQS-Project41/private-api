@@ -48,7 +48,7 @@ public class OrderController {
         return orderListService.findAll(user, Pageable.unpaged());
     }
 
-    /* 
+    
     @PostMapping("")
     public ResponseEntity<OrderList> postOrders(Authentication authentication,@RequestParam int store
         ,@RequestParam int address ) {
@@ -61,7 +61,7 @@ public class OrderController {
         //orderListService.createFromCart(user, address, store, deliveryId, deliveryTimestamp)
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    */
+    
     @GetMapping("/{id}")
     public ResponseEntity<OrderList> getByID( @PathVariable long id) {
         Optional<OrderList> ret = orderListService.findById(id);

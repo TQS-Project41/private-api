@@ -32,7 +32,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("stored")
 public class StoredController {
     
     @Autowired
@@ -47,7 +47,7 @@ public class StoredController {
 
 
     @GetMapping("")
-    public Page<SavedList> get(Authentication authentication) {
+    public Page<SavedList> getOrders(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return savedListService.findAll(user, Pageable.unpaged());
 
@@ -66,7 +66,7 @@ public class StoredController {
 
     */
     @GetMapping("/{id}")
-    public ResponseEntity<SavedList> getByID( @PathVariable long id) {
+    public ResponseEntity<SavedList> getOrdersByID( @PathVariable long id) {
         Optional<SavedList> ret = savedListService.findById(id);
 
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -97,7 +97,7 @@ public class StoredController {
     }
     */
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/order/{id}")
     public ResponseEntity<SavedList> deleteByID( @PathVariable long id) {
 
         Optional<SavedList> ret = savedListService.findById(id);
