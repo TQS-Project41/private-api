@@ -18,6 +18,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
+      
   api:
     depends_on:
       db:
@@ -36,11 +37,6 @@ services:
     ports:
       - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
     restart: on-failure
-    healthcheck:
-      test: "curl http://localhost:$SPRING_DOCKER_PORT/"
-      interval: 10s
-      timeout: 10s
-      retries: 10
 
   
 volumes:
