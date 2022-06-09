@@ -21,20 +21,20 @@ import com.example.demo.service.StoreService;
 import org.springframework.security.core.Authentication;
 
 @RestController
-@RequestMapping("/addresses")
+@RequestMapping("addresses")
 public class AddressController {
     @Autowired
     private AddressService addressService;
 
 
-    @GetMapping("address/")
+    @GetMapping("")
     public ResponseEntity<List<Address>> getAddress(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         List<Address> ret = addressService.getAllByUser(user);
         return new ResponseEntity<>(ret, HttpStatus.OK);    
     }
 
-    @PostMapping("address/")
+    @PostMapping("")
     public ResponseEntity<Address> postAddress(Authentication authentication, @RequestParam String country,@RequestParam String zipcode,
             @RequestParam String city,@RequestParam String address) {
         User user = (User) authentication.getPrincipal();
@@ -44,7 +44,7 @@ public class AddressController {
     }
 
 
-    @GetMapping("address/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Address> getAddress(@PathVariable int id) {
         Address ret = addressService.getById(id);
         if (ret != null) return new ResponseEntity<>(ret, HttpStatus.OK);

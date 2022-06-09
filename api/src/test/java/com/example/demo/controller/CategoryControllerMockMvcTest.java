@@ -57,7 +57,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(ret);
     
         RestAssuredMockMvc.given().contentType(ContentType.JSON)
-        .when().get("/categories/category/").then().assertThat().statusCode(200).and().
+        .when().get("/categories/").then().assertThat().statusCode(200).and().
         body("[0].name", equalTo("Legumes")).and().
         body("[1].name", equalTo("Fruta")).and().
         body("[2].name", equalTo("Doces")).and().
@@ -82,7 +82,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(ret);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().post("/categories/category?name=legumes").then().assertThat().statusCode(400);
+        .when().post("/categories?name=legumes").then().assertThat().statusCode(400);
         verify(categoryService, times(1)).getAll();
 
     }
@@ -98,7 +98,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(ret);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON).
-        when().put("/categories/category/{id}?name=aaaa",5).then().assertThat().statusCode(404);
+        when().put("/categories/{id}?name=aaaa",5).then().assertThat().statusCode(404);
         verify(categoryService, times(1)).getAll();
     }
 
@@ -115,7 +115,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(ret);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON).
-        when().put("/categories/category/{id}?name=fruta",1).then().assertThat().statusCode(404);
+        when().put("/categories/{id}?name=fruta",1).then().assertThat().statusCode(404);
         verify(categoryService, times(1)).getAll();
     }
 
@@ -132,7 +132,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(ret);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON).
-        when().put("/categories/category/{id}?name=aaaa",1).then().assertThat().statusCode(200);
+        when().put("/categories/{id}?name=aaaa",1).then().assertThat().statusCode(200);
         verify(categoryService, times(1)).getAll();
     }
 
@@ -147,7 +147,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(ret);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON).
-        when().delete("/categories/category/{id}",5).then().assertThat().statusCode(404);
+        when().delete("/categories/{id}",5).then().assertThat().statusCode(404);
         verify(categoryService, times(1)).getAll();
     }
 
@@ -164,7 +164,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.getAll()).thenReturn(ret);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON).
-        when().delete("/categories/category/{id}",1).then().assertThat().statusCode(200);
+        when().delete("/categories/{id}",1).then().assertThat().statusCode(200);
         verify(categoryService, times(1)).getAll();
     }
 
@@ -176,7 +176,7 @@ public class CategoryControllerMockMvcTest {
         when(categoryService.save(Mockito.any())).thenReturn(res);
         RestAssuredMockMvc.given().
         contentType(ContentType.JSON)
-        .when().post("/categories/category?name=legumes").then().assertThat().statusCode(201).and().
+        .when().post("/categories?name=legumes").then().assertThat().statusCode(201).and().
         body("name", equalTo("legumes")).and()
         .body("active", equalTo(true));
         verify(categoryService, times(1)).save(Mockito.any());

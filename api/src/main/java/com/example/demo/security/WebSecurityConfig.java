@@ -19,14 +19,16 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.csrf().ignoringAntMatchers("*");
+
+        http.cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/products/product*").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/categories/category").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/stores/store*").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/product*").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/category").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/store*").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

@@ -33,7 +33,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @RestController
-@RequestMapping("stored")
+@RequestMapping("stored_lists")
 public class StoredController {
     
     @Autowired
@@ -62,8 +62,7 @@ public class StoredController {
 
     }
 
-    
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<SavedList> getOrdersByID( @PathVariable long id) {
         Optional<SavedList> ret = savedListService.findById(id);
 
@@ -75,7 +74,7 @@ public class StoredController {
     }
     
 
-    @PostMapping("/{id}")
+    @PostMapping("{id}")
     public ResponseEntity<ProductListItem> postByID( @PathVariable long id,
     @RequestParam int product,@RequestParam int amount) {
 
@@ -89,13 +88,12 @@ public class StoredController {
 
         Optional<ProductListItem> product_final = savedListService.updateListItem(ret_final, productOptional.get(), amount);
 
-        savedListService.save(ret_final);
        
         return new ResponseEntity<>(product_final.get(),HttpStatus.OK);
     }
     
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<SavedList> deleteByID( @PathVariable long id) {
 
         Optional<SavedList> ret = savedListService.findById(id);

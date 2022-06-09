@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +22,7 @@ import com.example.demo.service.CategoryService;
 import com.example.demo.service.ProductService;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("products")
 public class ProductController {
 
     @Autowired
@@ -34,12 +33,12 @@ public class ProductController {
     private CategoryService catService;
 
 
-    @GetMapping("product")
+    @GetMapping("")
     public Page<Product> getProducts() {
         return service.getAll(null, "", 0f, null, Pageable.unpaged());
     }
 
-    @PostMapping("product")
+    @PostMapping("")
     public ResponseEntity<Product> createProducts(@RequestParam String name,@RequestParam String description
             , @RequestParam float price, @RequestParam int category ) {
         List<Category> a = catService.getAll();
@@ -55,7 +54,7 @@ public class ProductController {
 
     }
 
-    @GetMapping("product/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Product> getProduct(@PathVariable int id ) {
         Product x = service.getById(id).orElse(null);
         if (x == null){
@@ -65,7 +64,7 @@ public class ProductController {
         return new ResponseEntity<>(x, HttpStatus.OK);
     }
 
-    @DeleteMapping("product/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Product> deleteProduct(@PathVariable int id ) {
         Product x = service.getById(id).orElse(null);
         if (x == null){
@@ -77,7 +76,7 @@ public class ProductController {
         return new ResponseEntity<>(x, HttpStatus.OK);
     }
     
-    @PutMapping("product/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Product> putProduct(@PathVariable int id,
     @RequestParam(required = false)  String name,@RequestParam(required = false)  String description
     , @RequestParam (defaultValue="-1",required = false) float price, @RequestParam(defaultValue = "-1",required = false) int category ) {

@@ -18,7 +18,7 @@ import com.example.demo.service.AddressService;
 import com.example.demo.service.StoreService;
 
 @RestController
-@RequestMapping("/stores")
+@RequestMapping("stores")
 public class StoreController {
     
     @Autowired
@@ -27,13 +27,13 @@ public class StoreController {
     @Autowired
     private AddressService addressService;
 
-    @GetMapping("store")
+    @GetMapping("")
     public ResponseEntity<List<Store>> getStores() {
         List<Store> ret = service.getAll(); 
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PostMapping("store")
+    @PostMapping("")
     public ResponseEntity<Store> saveStore(@RequestParam String name,
     @RequestParam String country, @RequestParam String zipcode, @RequestParam String city,
     @RequestParam String address) {
@@ -42,14 +42,14 @@ public class StoreController {
         return new ResponseEntity<>(ret, HttpStatus.CREATED);
     }
     
-    @GetMapping("store/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Store> getStory(@PathVariable int id) {
         Store ret = service.getById(id);
         if (ret != null) return new ResponseEntity<>(ret, HttpStatus.OK);
         else return new ResponseEntity<>(new Store(), HttpStatus.BAD_REQUEST);
 
     }
-    @PutMapping("store/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Store> updateStore(@PathVariable int id,@RequestParam String name ) {
         Store ret = service.getById(id);
         if (ret != null) {

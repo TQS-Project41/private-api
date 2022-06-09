@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -49,6 +51,9 @@ public class AddressControllerMockMvcTest {
     @MockBean
     private AuthTokenFilter authTokenFilter;
 
+    @MockBean
+    private SecurityContextHolder securityContextHolder;
+
     @BeforeEach
     void setUp()  {
         RestAssuredMockMvc.mockMvc(mvc);
@@ -70,19 +75,23 @@ public class AddressControllerMockMvcTest {
         
 
         when(addressService.getAllByUser(user)).thenReturn(ret);
-        when((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(user);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+              user,
+              null,
+              Arrays.asList());
+        when(securityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
         
 
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/addresses/address/{id}",1)
+                .get("/addresses/")
                 .then()
                 .statusCode(200).and().
                 body("city", equalTo("Aveiro")).
                 body("address", equalTo("Rua das Estia"));
-                verify(addressService, times(1)).getById(1);
+                verify(addressService, times(1)).getAllByUser(user);
     }
 
     @Test
@@ -95,7 +104,7 @@ public class AddressControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/addresses/address/{id}",1)
+                .get("/addresses/{id}",1)
                 .then()
                 .statusCode(200).and().
                 body("city", equalTo("Aveiro")).
@@ -113,7 +122,7 @@ public class AddressControllerMockMvcTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/addresses/address/{id}",2)
+                .get("/addresses/{id}",2)
                 .then()
                 .statusCode(400);
                 verify(addressService, times(0)).getById(1);
