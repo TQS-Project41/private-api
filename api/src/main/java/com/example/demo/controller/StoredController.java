@@ -28,6 +28,8 @@ import com.example.demo.service.OrderListService;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.SavedListService;
 import com.example.demo.service.StoreService;
+import com.example.demo.service.UserService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,24 +44,27 @@ public class StoredController {
     @Autowired
     private SavedListService savedListService;
 
+    @Autowired
+    private UserService userService;
 
     @GetMapping("")
-    public Page<SavedList> getOrders(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public Page<SavedList> getOrders() {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return Page.empty();
+        User user = user_opt.get();
         return savedListService.findAll(user, Pageable.unpaged());
 
     }
 
     
     @PostMapping("")
-    public Page<SavedList> postStored(Authentication authentication,@RequestParam String name) {
-        User user = (User) authentication.getPrincipal();
-        
+    public ResponseEntity<SavedList> postStored(@RequestParam String name) {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
         ProductList productList = new ProductList(user);
-        // no ideia de qual lista ir buscar estou semi perido
-        savedListService.save(new SavedList(productList, name));
-        return savedListService.findAll(user, Pageable.unpaged());
-
+        SavedList x = savedListService.save(new SavedList(productList, name));
+        return new ResponseEntity<>(x,HttpStatus.OK);
     }
 
     @GetMapping("{id}")
@@ -69,8 +74,15 @@ public class StoredController {
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         SavedList ret_final = ret.get();
-       
-        return new ResponseEntity<>(ret_final,HttpStatus.OK);
+
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+            return new ResponseEntity<>(ret_final,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        
     }
     
 
@@ -81,15 +93,23 @@ public class StoredController {
         Optional<SavedList> ret = savedListService.findById(id);
 
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+        System.out.println("a");
         SavedList ret_final = ret.get();
         Optional<Product> productOptional = service.getById(product);
         if (!productOptional.isPresent())   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        Optional<ProductListItem> product_final = savedListService.updateListItem(ret_final, productOptional.get(), amount);
+        System.out.println("b");
 
        
-        return new ResponseEntity<>(product_final.get(),HttpStatus.OK);
+
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+            Optional<ProductListItem> product_final = savedListService.updateListItem(ret_final, productOptional.get(), amount);
+            return new ResponseEntity<>(product_final.get(),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
     
 
@@ -102,9 +122,15 @@ public class StoredController {
 
         SavedList ret_final = ret.get();
 
-        savedListService.delete(ret_final);
        
-        return new ResponseEntity<>(HttpStatus.OK);
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+            savedListService.delete(ret_final);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     

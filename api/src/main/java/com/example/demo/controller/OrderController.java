@@ -23,6 +23,8 @@ import com.example.demo.models.User;
 import com.example.demo.service.AddressService;
 import com.example.demo.service.OrderListService;
 import com.example.demo.service.StoreService;
+import com.example.demo.service.UserService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,36 +42,52 @@ public class OrderController {
     @Autowired
     private StoreService storeService;
 
+    @Autowired
+    private UserService userService;
+    
     @GetMapping("")
-    public Page<OrderList> getOrders(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public Page<OrderList> getOrders() {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return Page.empty();
+        User user = user_opt.get();
         return orderListService.findAll(user, Pageable.unpaged());
     }
 
     
     @PostMapping("")
-    public ResponseEntity<OrderList> postOrders(Authentication authentication,@RequestParam int store
+    public ResponseEntity<OrderList> postOrders(@RequestParam int store
         ,@RequestParam int address ,@RequestParam String deliveryTimestamp) {
-        User user = (User) authentication.getPrincipal();
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
         Address getAddress = addressService.getById(address);
         if (getAddress == null ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         Store getStore = storeService.getById(store);
         if (getStore == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         //NEED HELP NESTE ENDPOINT
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        orderListService.createFromCart(user, getAddress, getStore, 0L, LocalDateTime.parse(deliveryTimestamp, formatter));
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        OrderList x = orderListService.createFromCart(user, getAddress, getStore, 0L, LocalDateTime.parse(deliveryTimestamp, formatter));
+        return new ResponseEntity<>(x,HttpStatus.CREATED);
     }
     
     @GetMapping("{id}")
     public ResponseEntity<OrderList> getByID( @PathVariable long id) {
         Optional<OrderList> ret = orderListService.findById(id);
-
+        
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         OrderList ret_final = ret.get();
+
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+
+        if (user == ret_final.getProductList().getUser()|| user.getAdmin() || user.getStaff()){
+            return new ResponseEntity<>(ret_final,HttpStatus.OK);
+
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
        
-        return new ResponseEntity<>(ret_final,HttpStatus.OK);
     }
 
     /* 

@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.User;
+import com.example.demo.models.UserAddress;
 import com.example.demo.security.AuthTokenFilter;
 import com.example.demo.security.JwtUtils;
 import com.example.demo.security.WebSecurityConfig;
@@ -62,7 +63,7 @@ public class AddressControllerMockMvcTest {
 
     @Test
     void testGetAddressbyInvalidUser_thenReturnNotFound(){
-        when(userService.getAuthenticatedUser()).thenReturn(Optional.of(null));
+        when(userService.getAuthenticatedUser()).thenReturn(Optional. empty() );
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
@@ -70,6 +71,47 @@ public class AddressControllerMockMvcTest {
                 .then()
                 .statusCode(404);
              
+    }
+    @Test
+    void testCreateAddressbyUser_thenReturnAddressByUser(){
+        Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
+        address2.setId(1L);
+
+
+        User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+        
+        when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .post("/addresses?zipcode=1111")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    void testCreateInvalidAddressbyUser_thenReturnBadRequest(){
+        Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
+        address2.setId(1L);
+
+
+        User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+        UserAddress ret = new UserAddress(user,address2);
+        when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+        when(addressService.createUserAddress(any(),any())).thenReturn(Optional.of(ret));
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .post("/addresses?zipcode=1201-222&country=Portugal&city=Aveiro&address=Rua das Estias")
+                .then()
+                .statusCode(201).and().
+                body("address.city", equalTo("Aveiro")).
+                body("user.name", equalTo("Alexandre")).
+                body("address.address", equalTo("Rua das Estia"));
+                verify(userService, times(1)).getAuthenticatedUser();
+
     }
 
     @Test
@@ -122,6 +164,7 @@ public class AddressControllerMockMvcTest {
                 verify(addressService, times(1)).getById(1);
     }
 
+    
     @Test
     void testGetAddressbyInvalidId_thenReturnBadRequest(){
         Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.models.Address;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
+import com.example.demo.models.UserAddress;
 import com.example.demo.service.AddressService;
 import com.example.demo.service.StoreService;
 import com.example.demo.service.UserService;
@@ -42,12 +43,15 @@ public class AddressController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Address> postAddress(Authentication authentication, @RequestParam String country,@RequestParam String zipcode,
+    public ResponseEntity<UserAddress> postAddress(Authentication authentication, @RequestParam String country,@RequestParam String zipcode,
             @RequestParam String city,@RequestParam String address) {
-        User user = (User) authentication.getPrincipal();
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
         Address ret = new Address(country, zipcode, city, address);
-        addressService.save(ret);
-        return new ResponseEntity<>(ret, HttpStatus.CREATED);    
+        Optional<UserAddress> ret_final= addressService.createUserAddress(user, ret);
+
+        return new ResponseEntity<>(ret_final.get(), HttpStatus.CREATED);    
     }
 
 
