@@ -89,24 +89,17 @@ public class StoredController {
     @PostMapping("{id}")
     public ResponseEntity<ProductListItem> postByID( @PathVariable long id,
     @RequestParam int product,@RequestParam int amount) {
-
         Optional<SavedList> ret = savedListService.findById(id);
-
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        System.out.println("a");
         SavedList ret_final = ret.get();
         Optional<Product> productOptional = service.getById(product);
         if (!productOptional.isPresent())   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        System.out.println("b");
-
-       
-
         Optional<User> user_opt = userService.getAuthenticatedUser();
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = user_opt.get();
         if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
             Optional<ProductListItem> product_final = savedListService.updateListItem(ret_final, productOptional.get(), amount);
+            if (!product_final.isPresent())   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(product_final.get(),HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
