@@ -99,7 +99,7 @@ public class AddressControllerMockMvcTest {
         User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
         UserAddress ret = new UserAddress(user,address2);
         when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-        when(addressService.createUserAddress(any(),any())).thenReturn(Optional.of(ret));
+        when(addressService.createUserAddress(any(),any())).thenReturn((ret));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")

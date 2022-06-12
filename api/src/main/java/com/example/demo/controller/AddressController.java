@@ -49,9 +49,9 @@ public class AddressController {
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = user_opt.get();
         Address ret = new Address(country, zipcode, city, address);
-        Optional<UserAddress> ret_final= addressService.createUserAddress(user, ret);
+        UserAddress ret_final= addressService.createUserAddress(user, ret);
 
-        return new ResponseEntity<>(ret_final.get(), HttpStatus.CREATED);    
+        return new ResponseEntity<>(ret_final, HttpStatus.CREATED);    
     }
 
 
