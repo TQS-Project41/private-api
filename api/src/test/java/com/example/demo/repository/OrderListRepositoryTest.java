@@ -105,7 +105,7 @@ public class OrderListRepositoryTest {
 
         Address address1 = new Address("Portugal", "2222-221", "Santarem", "Rua das ss");
         Store store1 = new Store("joma", address);
-        User user1 = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
+        User user1 = new User("alex200020010@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         ProductList productList1 = new ProductList(user1);
         LocalDateTime deliveryTimestamp1=LocalDateTime.of(2022, 10, 15, 19, 0);
         Long deliveryId1=11L;

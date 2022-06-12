@@ -102,8 +102,8 @@ public class UserRepositoryTest {
         User user = new User("alex200020011@gmail.com", "Serras", "aaaaa", LocalDate.of(2000, 5, 28), "911912912", false, true);
         entityManager.persistAndFlush(user);
 
-        assertThat(rep.findByEmailAndPassword("alex200020011@gmail.com", "aaaaa")).isEqualTo(user);
-        assertThat(rep.findByEmailAndPassword("alex200020011@gmail.com", "bbbbb")).isNull();
+        assertThat(rep.findByEmailAndPassword("alex200020011@gmail.com", "aaaaa")).isPresent();
+        assertThat(rep.findByEmailAndPassword("alex200020011@gmail.com", "bbbbb")).isNotPresent();
     }
 
    

@@ -98,17 +98,17 @@ public class CartListRepositoryTest {
 
         entityManager.persistAndFlush(cartList1);
 
-        CartList lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1);
+        CartList lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1).get();
         assertEquals(cartList1.getProductList().getId(), lastCart.getProductList().getId());
 
         entityManager.persistAndFlush(cartList2);
 
-        lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1);
+        lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1).get();
         assertEquals(cartList2.getProductList().getId(), lastCart.getProductList().getId());
 
         entityManager.persistAndFlush(cartList3);
 
-        lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1);
+        lastCart = rep.findFirstByProductListUserOrderByIdDesc(user1).get();
         assertEquals(cartList2.getProductList().getId(), lastCart.getProductList().getId());
     }
 

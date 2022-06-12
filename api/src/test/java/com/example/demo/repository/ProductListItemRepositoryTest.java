@@ -225,8 +225,8 @@ public class ProductListItemRepositoryTest {
         entityManager.persistAndFlush(item2);
         entityManager.persistAndFlush(item3);
 
-        assertThat(rep.findByListIdAndProductId(productList1.getId(), product1.getId()).getAmount()).isEqualTo(15);
-        assertThat(rep.findByListIdAndProductId(productList1.getId(), product2.getId()).getAmount()).isEqualTo(1);
-        assertThat(rep.findByListIdAndProductId(productList2.getId(), product1.getId()).getAmount()).isEqualTo(3);
+        assertThat(rep.findByListIdAndProductId(productList1.getId(), product1.getId()).get().getAmount()).isEqualTo(15);
+        assertThat(rep.findByListIdAndProductId(productList1.getId(), product2.getId()).get().getAmount()).isEqualTo(1);
+        assertThat(rep.findByListIdAndProductId(productList2.getId(), product1.getId()).get().getAmount()).isEqualTo(3);
     }
 }
