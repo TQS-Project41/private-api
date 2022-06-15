@@ -49,17 +49,17 @@ printf "[*] DEPLOYING CONTAINERS...\n"
 
 if [[ "$down_flg" -eq 1 ]]; then
 	printf "\t[+] DOWNING CONTAINERS...\n"
-	docker-compose down
+	sudo docker-compose down
 	printf "[+] DONE.\n"
 fi
 
 if [[ "$build_flg" -eq 1 ]]; then
 	printf "\t[+] BUILDING CONTAINERS...\n"
-	docker-compose build
+	sudo docker-compose build
 	ret=$?
 	(($? != 0)) && { printf "[-] ERROR BUILDING CONTAINERS \n"; exit 1; }
 	printf "\t[+] DONE.\n"
 fi
 
 printf "[+] RUNNING CONTAINERS...\n"
-docker-compose up
+sudo docker-compose up

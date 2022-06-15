@@ -17,6 +17,8 @@ import com.example.demo.models.ProductListItem;
 import com.example.demo.models.User;
 import com.example.demo.service.CartListService;
 import com.example.demo.service.ProductService;
+import com.example.demo.service.UserService;
+
 import org.springframework.security.core.Authentication;
 
 
@@ -30,20 +32,29 @@ public class CartController {
     @Autowired
     private CartListService cartService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("")
-    public ResponseEntity<ProductListItem> postCart(Authentication authentication, @RequestParam int product,@RequestParam int amount) {
-        User user = (User) authentication.getPrincipal();
+    public ResponseEntity<ProductListItem> postCart( @RequestParam int product,@RequestParam int amount) {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
         Optional<Product> p = productService.getById(product);
         if (!p.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         Product getProd = p.get();
         Optional<ProductListItem> ret = cartService.updateCartItem(user, getProd, amount);
+        if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         return new ResponseEntity<>(ret.get(), HttpStatus.CREATED);    
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ProductListItem>> getCart(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public ResponseEntity<List<ProductListItem>> getCart() {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
         List<ProductListItem> ret = cartService.getCurrentCartItems(user);
         return new ResponseEntity<>(ret, HttpStatus.OK);    
     }

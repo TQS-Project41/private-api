@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.models.Address;
 import com.example.demo.models.OrderList;
 import com.example.demo.models.Product;
+import com.example.demo.models.ProductList;
 import com.example.demo.models.ProductListItem;
 import com.example.demo.models.SavedList;
 import com.example.demo.models.Store;
@@ -27,6 +28,8 @@ import com.example.demo.service.OrderListService;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.SavedListService;
 import com.example.demo.service.StoreService;
+import com.example.demo.service.UserService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,32 +42,31 @@ public class StoredController {
     private ProductService service;
 
     @Autowired
-    private StoreService storeService;
-
-
-    @Autowired
     private SavedListService savedListService;
 
+    @Autowired
+    private UserService userService;
 
     @GetMapping("")
-    public Page<SavedList> getOrders(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public Page<SavedList> getOrders() {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return Page.empty();
+        User user = user_opt.get();
         return savedListService.findAll(user, Pageable.unpaged());
 
     }
 
-    /* 
+    
     @PostMapping("")
-    public Page<SavedList> postStored(Authentication authentication,@RequestParam String name) {
-        User user = (User) authentication.getPrincipal();
-        
-        // no ideia de qual lista ir buscar estou semi perido
-        savedListService.save(new SavedList(productList, name));
-        return savedListService.findAll(user, Pageable.unpaged());
-
+    public ResponseEntity<SavedList> postStored(@RequestParam String name) {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        ProductList productList = new ProductList(user);
+        SavedList x = savedListService.save(new SavedList(productList, name));
+        return new ResponseEntity<>(x,HttpStatus.OK);
     }
 
-    */
     @GetMapping("{id}")
     public ResponseEntity<SavedList> getOrdersByID( @PathVariable long id) {
         Optional<SavedList> ret = savedListService.findById(id);
@@ -72,30 +74,37 @@ public class StoredController {
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         SavedList ret_final = ret.get();
-       
-        return new ResponseEntity<>(ret_final,HttpStatus.OK);
+
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+            return new ResponseEntity<>(ret_final,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        
     }
-    /* 
+    
 
     @PostMapping("{id}")
-    public ResponseEntity<SavedList> postByID( @PathVariable long id,
-    @RequestParam int product,@RequestParam int amout) {
-
+    public ResponseEntity<ProductListItem> postByID( @PathVariable long id,
+    @RequestParam int product,@RequestParam int amount) {
         Optional<SavedList> ret = savedListService.findById(id);
-
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
         SavedList ret_final = ret.get();
         Optional<Product> productOptional = service.getById(product);
         if (!productOptional.isPresent())   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        Product product_final = productOptional.get();
-
-        savedListService.save( new SavedList(productList, name))
-       
-        return new ResponseEntity<>(HttpStatus.OK);
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+            Optional<ProductListItem> product_final = savedListService.updateListItem(ret_final, productOptional.get(), amount);
+            if (!product_final.isPresent())   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(product_final.get(),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
-    */
+    
 
     @DeleteMapping("{id}")
     public ResponseEntity<SavedList> deleteByID( @PathVariable long id) {
@@ -106,9 +115,15 @@ public class StoredController {
 
         SavedList ret_final = ret.get();
 
-        savedListService.delete(ret_final);
        
-        return new ResponseEntity<>(HttpStatus.OK);
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+            savedListService.delete(ret_final);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     

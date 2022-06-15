@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.User;
+import com.example.demo.models.UserAddress;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.UserAddressRepository;
 
@@ -31,7 +33,16 @@ public class AddressService {
   }
 
   public List<Address> getAllByUser(User user) {
-    return null;
+    List<UserAddress> all_addresses = userAddressRepository.findByUser(user);
+    List<Address> ret = new ArrayList<>();
+    for (UserAddress a : all_addresses){
+      ret.add(a.getAddress());
+    }
+    return ret;
+  }
+
+  public UserAddress createUserAddress(User user, Address address) {
+    return userAddressRepository.save(new UserAddress(user,address));
   }
   
 }
