@@ -69,13 +69,7 @@ public class AdressControllerTemplateIT {
     @Autowired
     private UserAddressRepository uaRepository;
 
-    @Autowired
-    private JwtUtils jwtRepo;
 
-    @Autowired
-    private SecurityContextHolder securityContextHolder;
-    @Autowired
-    private AuthTokenFilter authToken;
 
     User user;
     Address address;    
@@ -96,11 +90,12 @@ public class AdressControllerTemplateIT {
         request.put("password", "pass");
         ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
         this.token = response.getBody().get("token").toString();
+        System.out.println("tokennnnnnnnnnnnNN  "+ token);
         //FINAL LOGIN
 
-        this.address = adressRepository.saveAndFlush(address2);
-        UserAddress ua= new UserAddress(user, address2);
-        this.ua=uaRepository.saveAndFlush(ua);
+        //this.address = adressRepository.saveAndFlush(address2);
+        //UserAddress ua= new UserAddress(user, address2);
+        //this.ua=uaRepository.saveAndFlush(ua);
     }
 
     @AfterEach
@@ -117,7 +112,7 @@ public class AdressControllerTemplateIT {
     void testGetAddressbyInvalidUser_thenReturnNotFound(){
 
         HttpHeaders headers= new HttpHeaders();
-        headers.set("Authentication", "Bearer "+"");
+        headers.set("Authorization", "Bearer "+"");
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<List> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses", HttpMethod.GET, requestEntity, List.class);
@@ -130,7 +125,7 @@ public class AdressControllerTemplateIT {
     void testPostInvalidAddress_thenReturnBadArgs(){
 
         HttpHeaders headers= new HttpHeaders();
-        headers.set("Authentication", "Bearer "+this.token);
+        headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<UserAddress> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses?zipcode=1111", HttpMethod.POST, requestEntity, UserAddress.class);
@@ -142,7 +137,7 @@ public class AdressControllerTemplateIT {
     @Test
     void testPostAddress_thenReturnCreate(){
         HttpHeaders headers= new HttpHeaders();
-        headers.set("Authentication", "Bearer "+this.token);
+        headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<UserAddress> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses?zipcode=1201-222&country=Portugal&city=Aveiro&address=Rua das Estias", HttpMethod.POST, requestEntity, UserAddress.class);
@@ -153,7 +148,7 @@ public class AdressControllerTemplateIT {
     @Test
     void testGetAllAddress_thenReturnCreate(){
         HttpHeaders headers= new HttpHeaders();
-        headers.set("Authentication", "Bearer "+this.token);
+        headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<List> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses", HttpMethod.GET, requestEntity, List.class);
@@ -168,7 +163,7 @@ public class AdressControllerTemplateIT {
     @Test
     void testGetAddressById_thenReturnCreate(){
         HttpHeaders headers= new HttpHeaders();
-        headers.set("Authentication", "Bearer "+this.token);
+        headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<Address> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses/1", HttpMethod.GET, requestEntity, Address.class);
@@ -179,7 +174,7 @@ public class AdressControllerTemplateIT {
     @Test
     void testGetAddressByInvalidId_thenReturnError(){
         HttpHeaders headers= new HttpHeaders();
-        headers.set("Authentication", "Bearer "+this.token);
+        headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<Address> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses/10000000000000000", HttpMethod.GET, requestEntity, Address.class);
