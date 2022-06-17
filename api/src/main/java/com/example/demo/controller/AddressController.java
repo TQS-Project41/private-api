@@ -63,9 +63,18 @@ public class AddressController {
 
     @GetMapping("{id}")
     public ResponseEntity<Address> getAddress(@PathVariable int id) {
-        Address ret = addressService.getById(id);
-        if (ret != null) return new ResponseEntity<>(ret, HttpStatus.OK);
-        else return new ResponseEntity<>(new Address(), HttpStatus.BAD_REQUEST);
+        Optional<User> user = userService.getAuthenticatedUser();
+        if (user.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        List<Address> addresses = addressService.getAllByUser(user.get());
+
+        for (Address address : addresses) {
+            if (address.getId() == id) {
+                return ResponseEntity.status(HttpStatus.OK).body(address);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     
 }

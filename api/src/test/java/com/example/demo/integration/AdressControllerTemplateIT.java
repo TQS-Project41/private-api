@@ -127,6 +127,7 @@ public class AdressControllerTemplateIT {
              
     }
 
+    // foi o serras q mandou
     @Test
     void testPostAddress_thenReturnCreate(){
         HttpHeaders headers= new HttpHeaders();
@@ -141,20 +142,11 @@ public class AdressControllerTemplateIT {
                 testRestTemplate.exchange(getBaseUrl()+"/addresses", HttpMethod.GET, requestEntity, List.class);
         assertThat(responseGet.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(responseGet.getBody().size(),equalTo(1));
-             
-    }
 
-    
-
-    @Test
-    void testGetAddressById_thenReturnCreate(){
-        HttpHeaders headers= new HttpHeaders();
-        headers.set("Authorization", "Bearer "+this.token);
-        HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<Address> response =
-                testRestTemplate.exchange(getBaseUrl()+"/addresses/{id}", HttpMethod.GET, requestEntity, Address.class,1);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody().getAddress(),equalTo(this.address.getAddress()));
+        ResponseEntity<Address> response2 = testRestTemplate.exchange(getBaseUrl() + "/addresses/{id}", HttpMethod.GET,
+                requestEntity, Address.class, 1);
+        assertThat(response2.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(response2.getBody().getAddress(), equalTo("Rua das Estias"));
     }
 
     @Test
@@ -164,7 +156,7 @@ public class AdressControllerTemplateIT {
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<Address> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses/{id}", HttpMethod.GET, requestEntity, Address.class,-1);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
     }
 
     

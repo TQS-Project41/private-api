@@ -151,7 +151,9 @@ public class AddressControllerMockMvcTest {
         Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
         address2.setId(1L);
 
-        when(addressService.getById(1)).thenReturn(address2);
+        User user = new User();
+        when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+        when(addressService.getAllByUser(user)).thenReturn(Arrays.asList(address2));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -161,7 +163,6 @@ public class AddressControllerMockMvcTest {
                 .statusCode(200).and().
                 body("city", equalTo("Aveiro")).
                 body("address", equalTo("Rua das Estia"));
-                verify(addressService, times(1)).getById(1);
     }
 
     
@@ -170,14 +171,16 @@ public class AddressControllerMockMvcTest {
         Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
         address2.setId(1L);
 
-        when(addressService.getById(1)).thenReturn(address2);
+        User user = new User();
+        when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+        when(addressService.getAllByUser(user)).thenReturn(Arrays.asList(address2));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
                 .get("/addresses/{id}",2)
                 .then()
-                .statusCode(400);
+                .statusCode(404);
                 verify(addressService, times(0)).getById(1);
     }
 }
