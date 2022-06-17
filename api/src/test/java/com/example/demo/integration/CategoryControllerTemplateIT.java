@@ -164,7 +164,7 @@ public class CategoryControllerTemplateIT {
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<Category> response = testRestTemplate.exchange(getBaseUrl() + "/categories/{id}?name=LEGUMES", HttpMethod.PUT, requestEntity,
-        Category.class,1);
+        Category.class,categoria.getId());
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
 
 
