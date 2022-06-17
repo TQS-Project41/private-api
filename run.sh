@@ -62,4 +62,4 @@ if [[ "$build_flg" -eq 1 ]]; then
 fi
 
 printf "[+] RUNNING CONTAINERS...\n"
-sudo docker-compose up
+sudo docker-compose up -d
