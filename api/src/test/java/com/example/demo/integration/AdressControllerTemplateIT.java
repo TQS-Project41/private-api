@@ -28,7 +28,8 @@ import com.example.demo.repository.UserAddressRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.AuthTokenFilter;
 import com.example.demo.security.JwtUtils;
-
+import com.example.demo.service.AddressService;
+import com.example.demo.service.UserService;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -53,7 +54,6 @@ public class AdressControllerTemplateIT {
         registry.add("spring.datasource.username", container::getUsername);
     }
 
-
     @LocalServerPort
     int randomServerPort;
 
@@ -64,23 +64,21 @@ public class AdressControllerTemplateIT {
     private UserRepository userRepository;
 
     @Autowired
+    private AuthTokenFilter authTokenFilter;
+    
+    @Autowired
     private AddressRepository adressRepository;
 
     @Autowired
     private UserAddressRepository uaRepository;
 
-
-
     User user;
-    Address address;    
+    Address address;   
     String token;
     UserAddress ua;
 
     @BeforeEach
     public void setUp(){
-        Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
-       
-        //String token= jwtRepo.generateJwtToken(1);
         //LOGIN
         User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
 
@@ -90,12 +88,7 @@ public class AdressControllerTemplateIT {
         request.put("password", "pass");
         ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
         this.token = response.getBody().get("token").toString();
-        System.out.println("tokennnnnnnnnnnnNN  "+ token);
         //FINAL LOGIN
-
-        //this.address = adressRepository.saveAndFlush(address2);
-        //UserAddress ua= new UserAddress(user, address2);
-        //this.ua=uaRepository.saveAndFlush(ua);
     }
 
     @AfterEach
@@ -117,7 +110,7 @@ public class AdressControllerTemplateIT {
         ResponseEntity<List> response =
                 testRestTemplate.exchange(getBaseUrl()+"/addresses", HttpMethod.GET, requestEntity, List.class);
 
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
              
     }
 
@@ -140,25 +133,18 @@ public class AdressControllerTemplateIT {
         headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<UserAddress> response =
-                testRestTemplate.exchange(getBaseUrl()+"/addresses?zipcode=1201-222&country=Portugal&city=Aveiro&address=Rua das Estias", HttpMethod.POST, requestEntity, UserAddress.class);
+                testRestTemplate.exchange(getBaseUrl()+"/addresses?zipcode=1211-222&country=Portugal&city=Porto&address=Rua das Estias", HttpMethod.POST, requestEntity, UserAddress.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
+        assertThat(response.getBody().getUser().getName(), equalTo(this.user.getName()));
+
+        ResponseEntity<List> responseGet =
+                testRestTemplate.exchange(getBaseUrl()+"/addresses", HttpMethod.GET, requestEntity, List.class);
+        assertThat(responseGet.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(responseGet.getBody().size(),equalTo(1));
              
     }
 
-    @Test
-    void testGetAllAddress_thenReturnCreate(){
-        HttpHeaders headers= new HttpHeaders();
-        headers.set("Authorization", "Bearer "+this.token);
-        HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<List> response =
-                testRestTemplate.exchange(getBaseUrl()+"/addresses", HttpMethod.GET, requestEntity, List.class);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        Address a = (Address) response.getBody().get(0);
-        assertThat(a.getAddress(),equalTo(this.address.getAddress()));
-        assertThat(response.getBody().size(),equalTo(1));
-
-    }
-
+    
 
     @Test
     void testGetAddressById_thenReturnCreate(){
@@ -166,7 +152,7 @@ public class AdressControllerTemplateIT {
         headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<Address> response =
-                testRestTemplate.exchange(getBaseUrl()+"/addresses/1", HttpMethod.GET, requestEntity, Address.class);
+                testRestTemplate.exchange(getBaseUrl()+"/addresses/{id}", HttpMethod.GET, requestEntity, Address.class,1);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(response.getBody().getAddress(),equalTo(this.address.getAddress()));
     }
@@ -177,8 +163,8 @@ public class AdressControllerTemplateIT {
         headers.set("Authorization", "Bearer "+this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<Address> response =
-                testRestTemplate.exchange(getBaseUrl()+"/addresses/10000000000000000", HttpMethod.GET, requestEntity, Address.class);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+                testRestTemplate.exchange(getBaseUrl()+"/addresses/{id}", HttpMethod.GET, requestEntity, Address.class,-1);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
     

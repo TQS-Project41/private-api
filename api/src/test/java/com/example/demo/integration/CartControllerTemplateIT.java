@@ -105,12 +105,7 @@ public class CartControllerTemplateIT {
 
     @AfterEach
     public void resetDb() {
-        uaRepository.deleteAll();
-        uaRepository.flush();
-        userRepository.deleteAll();
-        userRepository.flush();
-        adressRepository.deleteAll();
-        adressRepository.flush();
+    
     }
 
 }
