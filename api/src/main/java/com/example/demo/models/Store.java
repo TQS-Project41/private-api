@@ -23,7 +23,7 @@ public class Store {
     @NotNull(message = "name é obrigatório")
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "address_id", referencedColumnName = "id" , nullable = false)
     private Address address;
     

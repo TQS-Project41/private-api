@@ -48,9 +48,11 @@ public class StoreRepositoryTest {
     @Test
     void testWhenCreateOrderProductItemAndFindById_thenReturnSameOrderProductItem() {
 
+        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
+        entityManager.persistAndFlush(address);
+
         Store store = new Store();
         store.setName("puma");
-        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
         store.setAddress(address);
         entityManager.persistAndFlush(store);
 
@@ -69,16 +71,19 @@ public class StoreRepositoryTest {
 
     @Test
     void testGivenAddressAndFindByAll_thenReturnSameAddress() {
+        Address address = new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
+        entityManager.persistAndFlush(address);
+
         Store store = new Store();
         store.setName("puma");
-        Address address= new Address("Portugal", "1903-221", "Aveiro", "Rua das Pombas");
         store.setAddress(address);
         entityManager.persistAndFlush(store);
 
+        Address address1 = new Address("Portugal", "3903-221", "Santarem", "Rua das Estia");
+        entityManager.persistAndFlush(address1);
 
         Store store1 = new Store();
         store1.setName("JOMA");
-        Address address1= new Address("Portugal", "3903-221", "Santarem", "Rua das Estia");
         store1.setAddress(address1);
         entityManager.persistAndFlush(store1);
         

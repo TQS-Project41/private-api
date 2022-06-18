@@ -74,7 +74,7 @@ public class AuthControllerMockMvcTest {
     body.put("email", "pedro.dld@ua.pt");
     body.put("password", "password");
 
-    RestAssuredMockMvc.given().params(body)
+    RestAssuredMockMvc.given().body(body)
         .contentType("application/json")
         .when()
         .post("/login")
@@ -91,10 +91,10 @@ public class AuthControllerMockMvcTest {
     when(userService.getByEmailAndPassword(any(String.class), any(String.class))).thenReturn(Optional.empty());
 
     Map<String, String> body = new HashMap<>();
-    body.put("email", "pedro.dld@ua.pt");
     body.put("password", "password");
+    body.put("email", "pedro.dld@ua.pt");
 
-    RestAssuredMockMvc.given().params(body)
+    RestAssuredMockMvc.given().body(body)
         .contentType("application/json")
         .when()
         .post("/login")

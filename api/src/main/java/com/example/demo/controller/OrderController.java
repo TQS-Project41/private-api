@@ -82,7 +82,7 @@ public class OrderController {
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = user_opt.get();
 
-        if (user == ret_final.getProductList().getUser()|| user.getAdmin() || user.getStaff()){
+        if (user.getId() == ret_final.getProductList().getUser().getId() || user.getAdmin() || user.getStaff()){
             return new ResponseEntity<>(ret_final,HttpStatus.OK);
 
         }

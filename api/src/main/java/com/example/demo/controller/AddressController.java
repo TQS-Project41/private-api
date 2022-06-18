@@ -17,12 +17,14 @@ import com.example.demo.models.Address;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.models.UserAddress;
+import com.example.demo.security.AuthTokenFilter;
+import com.example.demo.security.JwtUtils;
 import com.example.demo.service.AddressService;
 import com.example.demo.service.StoreService;
 import com.example.demo.service.UserService;
 
 import org.springframework.security.core.Authentication;
-
+import org.springframework.security.core.context.SecurityContextHolder;
 @RestController
 @RequestMapping("addresses")
 public class AddressController {
@@ -31,6 +33,10 @@ public class AddressController {
 
     @Autowired
     private UserService userService;
+
+  
+
+    
 
 
     @GetMapping("")
@@ -43,7 +49,7 @@ public class AddressController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserAddress> postAddress(Authentication authentication, @RequestParam String country,@RequestParam String zipcode,
+    public ResponseEntity<UserAddress> postAddress(@RequestParam String country,@RequestParam String zipcode,
             @RequestParam String city,@RequestParam String address) {
         Optional<User> user_opt = userService.getAuthenticatedUser();
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -57,9 +63,18 @@ public class AddressController {
 
     @GetMapping("{id}")
     public ResponseEntity<Address> getAddress(@PathVariable int id) {
-        Address ret = addressService.getById(id);
-        if (ret != null) return new ResponseEntity<>(ret, HttpStatus.OK);
-        else return new ResponseEntity<>(new Address(), HttpStatus.BAD_REQUEST);
+        Optional<User> user = userService.getAuthenticatedUser();
+        if (user.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        List<Address> addresses = addressService.getAllByUser(user.get());
+
+        for (Address address : addresses) {
+            if (address.getId() == id) {
+                return ResponseEntity.status(HttpStatus.OK).body(address);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     
 }

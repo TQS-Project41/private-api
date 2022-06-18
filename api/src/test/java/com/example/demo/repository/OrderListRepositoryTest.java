@@ -65,8 +65,8 @@ public class OrderListRepositoryTest {
         Long deliveryId=1L;
         OrderList list = new OrderList(productListTmp, address, store, deliveryId, deliveryTimestamp);
         entityManager.persistAndFlush(user);
-        entityManager.persistAndFlush(store);
         entityManager.persistAndFlush(address);
+        entityManager.persistAndFlush(store);
         entityManager.persistAndFlush(userAddressTmp);
         entityManager.persistAndFlush(productListTmp);
         entityManager.persistAndFlush(list);
@@ -98,8 +98,8 @@ public class OrderListRepositoryTest {
         OrderList list = new OrderList(productList, address, store, deliveryId, deliveryTimestamp);
 
         entityManager.persistAndFlush(user);
-        entityManager.persistAndFlush(store);
         entityManager.persistAndFlush(address);
+        entityManager.persistAndFlush(store);
         entityManager.persistAndFlush(productList);
         entityManager.persistAndFlush(list);
 
