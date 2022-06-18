@@ -30,7 +30,7 @@ public class WebSecurityConfig {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/product*").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/category").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/categories").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/store*").permitAll()
                 .anyRequest().authenticated();
 
