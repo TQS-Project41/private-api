@@ -1,8 +1,8 @@
 version: "3.0"
 services:
-  db:
+  test_db:
     image: mysql:latest
-    env_file: ./.env
+    env_file: ./testing/.env
     environment:
       MYSQL_DATABASE: $MYSQL_DATABASE
       MYSQL_USER: $MYSQL_USER
@@ -11,7 +11,7 @@ services:
     ports:
       - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
     volumes:
-      - datafiles:/var/lib/mysql
+      - datafiles:/var/lib/dev_mysql
     restart: always
     healthcheck:
       test: "mysql $MYSQL_DATABASE -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'SELECT 1;'"
@@ -19,12 +19,12 @@ services:
       timeout: 10s
       retries: 10
 
-  api:
+  test_api:
     depends_on:
-      db:
+      test_db:
         condition: service_healthy
     build: ./api/
-    env_file: ./.env
+    env_file: ./testing/.env
     environment:
       SPRING_APPLICATION_JSON: '{
           "spring.datasource.url"  : "jdbc:mysql://db:$MYSQL_DOCKER_PORT/$MYSQL_DATABASE?useSSL=true",
