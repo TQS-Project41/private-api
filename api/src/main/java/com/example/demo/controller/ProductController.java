@@ -34,8 +34,14 @@ public class ProductController {
 
 
     @GetMapping("")
-    public Page<Product> getProducts() {
-        return service.getAll(null, "", 0f, null, Pageable.unpaged());
+    public Page<Product> getProducts(
+        @RequestParam(name = "category", required = false) Long categoryId,
+        @RequestParam(name = "min_price", required = false, defaultValue = "0") Float minPrice,
+        @RequestParam(name = "max_price", required = false) Float maxPrice,
+        @RequestParam(name = "query", required = false, defaultValue = "") String query,
+        Pageable pageable
+    ) {
+        return service.getAll(categoryId, query, minPrice, maxPrice, pageable);
     }
 
     @PostMapping("")
