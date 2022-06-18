@@ -46,7 +46,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-public class OrderControllerTemplateIT {
+public class ProductControllerTemplateIT {
     @Container
     public static MySQLContainer<?> container = new MySQLContainer<>("mysql");
 
@@ -66,20 +66,22 @@ public class OrderControllerTemplateIT {
     private UserRepository userRepository;
 
     @Autowired
-    private StoreRepository storeRepository;
+    private ProductRepository prodRepository;
+
     @Autowired
-    private AddressRepository addressRepository;
-    @Autowired
-    private OrderListRepository orderListRepository;
+    private CategoryRepository catRepository;
+
+    
     @Autowired
     private AuthTokenFilter authTokenFilter;
+
     User user;
     String token;
 
+    Product product;
     Category categoria;
-    Address address;
-    Store store;
-    OrderList order;
+
+    
     @BeforeEach
     public void setUp() {
 
@@ -95,134 +97,136 @@ public class OrderControllerTemplateIT {
                 request, Map.class);
         this.token = response.getBody().get("token").toString();
         // FINAL LOGIN
-        Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
-        Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
-        
-        this.address= addressRepository.save(address);
-        addressRepository.save(address2);
+        Category categoria = new Category("FRUTA", true);
+        Category categoria1 = new Category("LEGUMES", true);
+        Category categoria2 = new Category("VEGETAIS", true);
 
-        Store store = new Store("Puma", address);
-        this.store=storeRepository.save(store);
-       /* 
-        OrderList ret = new OrderList(new ProductList(user), address2, store, 1l);
-        OrderList ret1 = new OrderList(new ProductList(user), address2, store, 2l);
-        OrderList ret2 = new OrderList(new ProductList(user), address2, store, 3l);
-       this.order= orderListRepository.save(ret);
-        orderListRepository.save(ret1);
-        orderListRepository.save(ret2);
-        */
+        this.categoria = catRepository.saveAndFlush(categoria);
+        catRepository.saveAndFlush(categoria1);
+        catRepository.saveAndFlush(categoria2);
+        Product p1 = new Product("tomate", 5.0f, "frescos", true, this.categoria);
+        Product p2 = new Product("cebola",1.5f,"colhidas hoje",true,this.categoria);
+
+        this.product=prodRepository.saveAndFlush(p1);
+        prodRepository.saveAndFlush(p2);
     }
-
     @AfterEach
     public void resetDb() {
-        addressRepository.deleteAll();
-        addressRepository.flush();
-        storeRepository.deleteAll();
-        storeRepository.flush();
-
-
-        orderListRepository.deleteAll();
-        orderListRepository.flush();
-
+        prodRepository.deleteAll();
+        prodRepository.flush();
+        catRepository.deleteAll();
+        catRepository.flush();
         userRepository.deleteAll();
         userRepository.flush();
-
     }
-
-
-  /* 
     @Test
     void testInvalidAddress_thenReturnNotFound() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<OrderList> response = testRestTemplate.exchange(getBaseUrl() + "/orders?store=555&address=555&deliveryTimestamp=111111", HttpMethod.POST, requestEntity,
-        OrderList.class);
+        ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/products", HttpMethod.GET, requestEntity,
+        List.class);
 
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(response.getBody().size(), equalTo(2));
+
     }
-    
+
     @Test
-    void testInvalidStore_thenReturnNotFound() {
+    void whenPostProduct_thenCreateProduct() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/orders?store=555&address="+this.address.getId()+"&deliveryTimestamp=111111", HttpMethod.POST, requestEntity,
-                List.class);
-
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
-    }
-    @Test
-    void testPost_thenReturnOrder() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + this.token);
-        HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<OrderList> response = testRestTemplate.exchange(getBaseUrl() + "/orders?store="+this.store.getId()
-        +"&address="+this.address.getId()+"&deliveryTimestamp=111111", HttpMethod.POST, requestEntity,
-        OrderList.class);
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products?name=tomate&description=frescos&price=5.0&category="+this.categoria.getId(), HttpMethod.POST, requestEntity,
+        Product.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
-    }
 
+    }
     @Test
-    void testGetOrders_thenReturnOrder() {
+    void whenPostInvalidProduct_thenReturnError() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<OrderList> response = testRestTemplate.exchange(getBaseUrl() + "/orders/{id}", HttpMethod.GET, requestEntity,
-        OrderList.class,-1);
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products?name=tomate&description=frescos&price=5.0&category=-1", HttpMethod.POST, requestEntity,
+        Product.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+
     }
 
     @Test
-    void testGetOrdersValid_thenReturnOrder() {
+    void whengetProduct_thenCreateProduct() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<OrderList> response = testRestTemplate.exchange(getBaseUrl() + "/orders/{id}", HttpMethod.GET, requestEntity,
-        OrderList.class,this.order.getId());
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products/{id}", HttpMethod.GET, requestEntity,
+        Product.class,this.product.getId());
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
     }
 
-
     @Test
-    void testGetOrdersiValidUser_thenReturnForbidden() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + "");
-        HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<OrderList> response = testRestTemplate.exchange(getBaseUrl() + "/orders/{id}", HttpMethod.POST, requestEntity,
-        OrderList.class,this.order.getId());
-
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
-    }
-    @Test
-    void testInvalidPostOrder_thenReturnBadArgs() {
+    void whengetInvalidIDProduct_thenCreateProduct() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<OrderList> response = testRestTemplate.exchange(getBaseUrl() + "/orders/", HttpMethod.POST, requestEntity,
-        OrderList.class,this.order.getId());
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products/{id}", HttpMethod.GET, requestEntity,
+        Product.class,-1);
 
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+
     }
 
     @Test
-    void testGetCartbyInvalidUser_thenReturnNotFound() {
+    void whengetInvalidIDProduct_thenDeleteFails() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/orders/", HttpMethod.GET, requestEntity,
-                List.class);
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products/{id}", HttpMethod.DELETE, requestEntity,
+        Product.class,-1);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+
+    }
+
+    @Test
+    void whenDeleteProduct_thenDeleteProduct() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        HttpEntity requestEntity = new HttpEntity<Object>(headers);
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products/{id}", HttpMethod.DELETE, requestEntity,
+        Product.class,this.product.getId());
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody().size(), equalTo(3));
-
 
     }
 
-    */
+    @Test
+    void whenUpdateProduct_thenUpdateProduct() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        HttpEntity requestEntity = new HttpEntity<Object>(headers);
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products/{id}?name=aaa", HttpMethod.PUT, requestEntity,
+        Product.class,-1);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+
+    }
+
+    @Test
+    void whenUpdateInvalidProduct_thenNotFound() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        HttpEntity requestEntity = new HttpEntity<Object>(headers);
+        ResponseEntity<Product> response = testRestTemplate.exchange(getBaseUrl() + "/products/{id}?name=aaa", HttpMethod.PUT, requestEntity,
+        Product.class,this.product.getId());
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+    }
+
     private String getBaseUrl() {
         return "http://localhost:" + randomServerPort;
     }
