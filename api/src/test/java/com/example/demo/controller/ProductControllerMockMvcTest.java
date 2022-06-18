@@ -66,9 +66,10 @@ public class ProductControllerMockMvcTest {
                 .get("/products")
                 .then()
                 .statusCode(200);
-                verify(productService, times(1)).getAll(null, "", 0f, null, Pageable.unpaged() );
+                
+        verify(productService, times(1)).getAll(Mockito.eq(null), Mockito.eq(""), Mockito.eq(0f), Mockito.eq(null), Mockito.any(Pageable.class) );
 
-            }
+    }
 
     @Test
     void testGetAllProducts_thenReturnAllProducts(){
@@ -77,7 +78,7 @@ public class ProductControllerMockMvcTest {
         Product p2 = new Product("cebola",1.5f,"colhidas hoje",true,a);
         Pageable pageable = Pageable.unpaged();
         Page<Product> ret= new PageImpl<>(Arrays.asList(p1, p2), pageable, 2);
-        when(productService.getAll(null, "", 0f, null, Pageable.unpaged())).thenReturn(ret);
+        when(productService.getAll(Mockito.eq(null), Mockito.eq(""), Mockito.eq(0f), Mockito.eq(null), Mockito.any(Pageable.class) )).thenReturn(ret);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -86,9 +87,10 @@ public class ProductControllerMockMvcTest {
                 .then()
                 .statusCode(200).and().
                 body("content.name", hasItems("tomate","cebola"));
-                verify(productService, times(1)).getAll(null, "", 0f, null, Pageable.unpaged() );
 
-            }
+        verify(productService, times(1)).getAll(Mockito.eq(null), Mockito.eq(""), Mockito.eq(0f), Mockito.eq(null), Mockito.any(Pageable.class) );
+
+    }
     
 
     @Test
