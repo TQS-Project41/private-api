@@ -2,14 +2,14 @@ version: "3.0"
 services:
   test_db:
     image: mysql:latest
+    networks:
+      - private_test
     env_file: ./testing/.env
     environment:
       MYSQL_DATABASE: $MYSQL_DATABASE
       MYSQL_USER: $MYSQL_USER
       MYSQL_PASSWORD: $MYSQL_PASSWORD
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    ports:
-      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
     volumes:
       - datafiles:/var/lib/dev_mysql
     restart: always
@@ -24,10 +24,12 @@ services:
       test_db:
         condition: service_healthy
     build: ./api/
+    networks:
+      - private_test
     env_file: ./testing/.env
     environment:
       SPRING_APPLICATION_JSON: '{
-          "spring.datasource.url"  : "jdbc:mysql://db:$MYSQL_DOCKER_PORT/$MYSQL_DATABASE?useSSL=true",
+          "spring.datasource.url"  : "jdbc:mysql://test_db:3306/$MYSQL_DATABASE?useSSL=true",
           "spring.datasource.username" : "$MYSQL_USER",
           "spring.datasource.password" : "$MYSQL_PASSWORD",
           "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL8Dialect",
@@ -38,6 +40,8 @@ services:
       - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
     restart: on-failure
 
+networks:
+  private_test:
   
 volumes:
   datafiles:
