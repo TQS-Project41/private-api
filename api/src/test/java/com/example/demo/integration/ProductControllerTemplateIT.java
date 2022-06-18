@@ -17,29 +17,18 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
-import com.example.demo.models.Address;
 import com.example.demo.models.Category;
-import com.example.demo.models.OrderList;
 import com.example.demo.models.Product;
-import com.example.demo.models.ProductList;
-import com.example.demo.models.ProductListItem;
-import com.example.demo.models.Store;
 import com.example.demo.models.User;
-import com.example.demo.repository.AddressRepository;
-import com.example.demo.repository.CartListRepository;
 import com.example.demo.repository.CategoryRepository;
-import com.example.demo.repository.OrderListRepository;
-import com.example.demo.repository.ProductListItemRepository;
-import com.example.demo.repository.ProductListRepository;
 import com.example.demo.repository.ProductRepository;
-import com.example.demo.repository.StoreRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.AuthTokenFilter;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -72,7 +61,6 @@ public class ProductControllerTemplateIT {
     @Autowired
     private CategoryRepository catRepository;
 
-    
     @Autowired
     private AuthTokenFilter authTokenFilter;
 
@@ -120,16 +108,17 @@ public class ProductControllerTemplateIT {
         userRepository.deleteAll();
         userRepository.flush();
     }
+
     @Test
     void testInvalidAddress_thenReturnNotFound() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<Page> response = testRestTemplate.exchange(getBaseUrl() + "/products", HttpMethod.GET, requestEntity,
-        Page.class);
+        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "/products", HttpMethod.GET, requestEntity,
+                Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody().getSize(), equalTo(2));
+        assertThat(response.getBody().get("totalElements"), equalTo(2));
 
     }
 

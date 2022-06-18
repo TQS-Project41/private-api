@@ -1,4 +1,5 @@
 package com.example.demo.integration;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,21 +21,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.example.demo.models.Address;
 import com.example.demo.models.Category;
 import com.example.demo.models.OrderList;
-import com.example.demo.models.Product;
 import com.example.demo.models.ProductList;
-import com.example.demo.models.ProductListItem;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.CartListRepository;
-import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.OrderListRepository;
-import com.example.demo.repository.ProductListItemRepository;
 import com.example.demo.repository.ProductListRepository;
-import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.StoreRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.AuthTokenFilter;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -67,19 +62,27 @@ public class OrderControllerTemplateIT {
 
     @Autowired
     private StoreRepository storeRepository;
+
     @Autowired
     private AddressRepository addressRepository;
+
     @Autowired
     private OrderListRepository orderListRepository;
+
     @Autowired
-    private AuthTokenFilter authTokenFilter;
+    private ProductListRepository productListRepository;
+
+    @Autowired
+    private CartListRepository cartListRepository;
+
     User user;
     String token;
-
     Category categoria;
     Address address;
+    Address address2;
     Store store;
     OrderList order;
+
     @BeforeEach
     public void setUp() {
 
@@ -96,41 +99,45 @@ public class OrderControllerTemplateIT {
         this.token = response.getBody().get("token").toString();
         // FINAL LOGIN
         Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
-        Address address2 = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
+        Address address2 = new Address("Espanha", "1201-222", "Aveiro", "Rua das Estia");
         
-        this.address= addressRepository.save(address);
-        addressRepository.save(address2);
+        this.address = addressRepository.saveAndFlush(address);
+        this.address2 = addressRepository.saveAndFlush(address2);
 
-        Store store = new Store("Puma", address);
-        this.store=storeRepository.save(store);
-       /* 
-        OrderList ret = new OrderList(new ProductList(user), address2, store, 1l);
-        OrderList ret1 = new OrderList(new ProductList(user), address2, store, 2l);
-        OrderList ret2 = new OrderList(new ProductList(user), address2, store, 3l);
-       this.order= orderListRepository.save(ret);
-        orderListRepository.save(ret1);
-        orderListRepository.save(ret2);
-        */
+        Store store = new Store("Puma", this.address);
+        this.store = storeRepository.saveAndFlush(store);
+
+        OrderList ret = new OrderList(new ProductList(this.user), this.address2, this.store, 1l);
+        OrderList ret1 = new OrderList(new ProductList(this.user), this.address2, this.store, 2l);
+        OrderList ret2 = new OrderList(new ProductList(this.user), this.address2, this.store, 3l);
+        this.order = orderListRepository.saveAndFlush(ret);
+        orderListRepository.saveAndFlush(ret1);
+        orderListRepository.saveAndFlush(ret2);
     }
 
     @AfterEach
     public void resetDb() {
-        addressRepository.deleteAll();
-        addressRepository.flush();
-        storeRepository.deleteAll();
-        storeRepository.flush();
-
 
         orderListRepository.deleteAll();
         orderListRepository.flush();
+
+        cartListRepository.deleteAll();
+        cartListRepository.flush();
+
+        productListRepository.deleteAll();
+        productListRepository.flush();
+
+        storeRepository.deleteAll();
+        storeRepository.flush();
+
+        addressRepository.deleteAll();
+        addressRepository.flush();
 
         userRepository.deleteAll();
         userRepository.flush();
 
     }
 
-
-  /* 
     @Test
     void testInvalidAddress_thenReturnNotFound() {
         HttpHeaders headers = new HttpHeaders();
@@ -147,7 +154,7 @@ public class OrderControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/orders?store=555&address="+this.address.getId()+"&deliveryTimestamp=111111", HttpMethod.POST, requestEntity,
+        ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/orders?store=555&address="+this.address2.getId()+"&deliveryTimestamp=111111", HttpMethod.POST, requestEntity,
                 List.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
@@ -158,7 +165,7 @@ public class OrderControllerTemplateIT {
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<OrderList> response = testRestTemplate.exchange(getBaseUrl() + "/orders?store="+this.store.getId()
-        +"&address="+this.address.getId()+"&deliveryTimestamp=111111", HttpMethod.POST, requestEntity,
+        +"&address="+this.address2.getId()+"&deliveryTimestamp=11-12-2010 12:13", HttpMethod.POST, requestEntity,
         OrderList.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
@@ -213,16 +220,15 @@ public class OrderControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/orders/", HttpMethod.GET, requestEntity,
-                List.class);
+        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "/orders/", HttpMethod.GET, requestEntity,
+                Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody().size(), equalTo(3));
+        assertThat(response.getBody().get("totalElements"), equalTo(3));
 
 
     }
 
-    */
     private String getBaseUrl() {
         return "http://localhost:" + randomServerPort;
     }
