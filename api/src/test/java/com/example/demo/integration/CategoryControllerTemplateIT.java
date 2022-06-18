@@ -101,14 +101,14 @@ public class CategoryControllerTemplateIT {
     }
 
     @Test
-    void testGetAddressbyInvalidUser_thenReturnNotFound() {
+    void testGetNoUser_thenReturnCategories() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + "");
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
         ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/categories", HttpMethod.GET, requestEntity,
                 List.class);
 
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
 
     }
     @Test
