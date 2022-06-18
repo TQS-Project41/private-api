@@ -16,6 +16,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.data.domain.Page;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.Category;
@@ -124,11 +125,11 @@ public class ProductControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         HttpEntity requestEntity = new HttpEntity<Object>(headers);
-        ResponseEntity<List> response = testRestTemplate.exchange(getBaseUrl() + "/products", HttpMethod.GET, requestEntity,
-        List.class);
+        ResponseEntity<Page> response = testRestTemplate.exchange(getBaseUrl() + "/products", HttpMethod.GET, requestEntity,
+        Page.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody().size(), equalTo(2));
+        assertThat(response.getBody().getSize(), equalTo(2));
 
     }
 
