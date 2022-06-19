@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +59,27 @@ public class CartController {
         User user = user_opt.get();
         List<ProductListItem> ret = cartService.getCurrentCartItems(user);
         return new ResponseEntity<>(ret, HttpStatus.OK);    
+    }
+
+
+    // FALTA FAZER TESTE @alexandreserras 
+    @DeleteMapping("{product}")
+    public ResponseEntity<ProductListItem> deleteCart( @PathVariable int product ) {
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        Optional<Product> p = productService.getById(product);
+        if (!p.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        List<ProductListItem> ret = cartService.getCurrentCartItems(user);
+
+        for (ProductListItem item : ret) {
+            if (item.getProduct().getId() == product) {
+                cartService.deleteListItem(item);
+                return new ResponseEntity<>(item, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);    
     }
 
 }
