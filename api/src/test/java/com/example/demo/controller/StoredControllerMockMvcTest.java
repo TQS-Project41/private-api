@@ -190,7 +190,8 @@ public class StoredControllerMockMvcTest {
     void testGetSaved_thenReturnSavedList(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
       SavedList ret = new SavedList(new ProductList(user), "aaaa");
-     
+      user.setId(-1);
+
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(savedService.findById(1l)).thenReturn(Optional.of(ret));
 
@@ -205,9 +206,9 @@ public class StoredControllerMockMvcTest {
     @Test
     void testGetInvalidUserSaved_thenReturnForbidden(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-        
+      User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+      user.setId(-1);
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(savedService.findById(1l)).thenReturn(Optional.of(ret));
 
@@ -222,9 +223,10 @@ public class StoredControllerMockMvcTest {
     @Test
     void testGetUserStaff_thenReturnSaved(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", true, false);
-    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-        
+      User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", true, false);
+      SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+      user.setId(-1);
+
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(savedService.findById(1l)).thenReturn(Optional.of(ret));
 
@@ -239,9 +241,10 @@ public class StoredControllerMockMvcTest {
     @Test
     void testGetUserSavedAdmin_thenReturnSAved(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, true);
-    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-        
+      User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, true);
+      SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+      user.setId(-1);
+
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(savedService.findById(1l)).thenReturn(Optional.of(ret));
 
@@ -302,9 +305,10 @@ public class StoredControllerMockMvcTest {
     @Test
     void testDeleteInvalidUserSaved_thenReturnForbidden(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-        
+      User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+      user.setId(-1);
+
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(savedService.findById(1l)).thenReturn(Optional.of(ret));
 
@@ -319,9 +323,10 @@ public class StoredControllerMockMvcTest {
     @Test
     void testDeleteUserStaff_thenReturnSaved(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", true, false);
-    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-        
+      User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", true, false);
+      SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+      user.setId(-1);
+
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(savedService.findById(1l)).thenReturn(Optional.of(ret));
 
@@ -336,9 +341,10 @@ public class StoredControllerMockMvcTest {
     @Test
     void testDeleteUserSavedAdmin_thenReturnSAved(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-    User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, true);
-    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-        
+      User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, true);
+      SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+      user.setId(-1);
+
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(savedService.findById(1l)).thenReturn(Optional.of(ret));
 
@@ -418,12 +424,13 @@ public class StoredControllerMockMvcTest {
     Product p1 = new Product("tomate", 5.0f, "frescos", true, a);
     
     User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-  SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-  ProductListItem prod= new ProductListItem(1, new ProductList(user1), p1);
-  when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-  when(savedService.updateListItem(ret,p1,1)).thenReturn(Optional.of(prod));
-  when(savedService.findById(1l)).thenReturn(Optional.of(ret));
-  when(productService.getById(1)).thenReturn(Optional.of(p1));
+    user.setId(-1);
+    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+    ProductListItem prod= new ProductListItem(1, new ProductList(user1), p1);
+    when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+    when(savedService.updateListItem(ret,p1,1)).thenReturn(Optional.of(prod));
+    when(savedService.findById(1l)).thenReturn(Optional.of(ret));
+    when(productService.getById(1)).thenReturn(Optional.of(p1));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -440,12 +447,13 @@ public class StoredControllerMockMvcTest {
     Product p1 = new Product("tomate", 5.0f, "frescos", true, a);
     
     User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
-  SavedList ret = new SavedList(new ProductList(user1), "aaaa");
-  ProductListItem prod= new ProductListItem(1, new ProductList(user), p1);
-  when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
-  when(savedService.updateListItem(ret,p1,1)).thenReturn(Optional.of(prod));
-  when(savedService.findById(1l)).thenReturn(Optional.of(ret));
-  when(productService.getById(1)).thenReturn(Optional.of(p1));
+    user.setId(-1);
+    SavedList ret = new SavedList(new ProductList(user1), "aaaa");
+    ProductListItem prod= new ProductListItem(1, new ProductList(user), p1);
+    when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+    when(savedService.updateListItem(ret,p1,1)).thenReturn(Optional.of(prod));
+    when(savedService.findById(1l)).thenReturn(Optional.of(ret));
+    when(productService.getById(1)).thenReturn(Optional.of(p1));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -462,6 +470,7 @@ public class StoredControllerMockMvcTest {
     Product p1 = new Product("tomate", 5.0f, "frescos", true, a);
     
     User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+    user.setId(-1);
   SavedList ret = new SavedList(new ProductList(user1), "aaaa");
   ProductListItem prod= new ProductListItem(1, new ProductList(user), p1);
   when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));

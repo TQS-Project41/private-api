@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.models.Product;
@@ -66,6 +67,10 @@ public class SavedListService {
 
   public Page<SavedList> findAll(User user, Pageable page) {
     return repository.findByProductListUser(user, page);
+  }
+
+  public List<ProductListItem> getAllProducts(Long id) {
+    return productListItemRepository.findByListId(id);
   }
 
 }

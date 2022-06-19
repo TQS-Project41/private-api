@@ -68,7 +68,7 @@ public class StoredController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<SavedList> getOrdersByID( @PathVariable long id) {
+    public ResponseEntity<SavedList> getStoredListByID( @PathVariable long id) {
         Optional<SavedList> ret = savedListService.findById(id);
 
         if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -124,6 +124,25 @@ public class StoredController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+
+    @GetMapping("{id}/products")
+    public ResponseEntity<List<ProductListItem>> getProductsListByID( @PathVariable long id) {
+        Optional<SavedList> ret = savedListService.findById(id);
+
+        if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        SavedList ret_final = ret.get();
+
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (user.getId() == ret_final.getProductList().getUser().getId() || user.getAdmin() || user.getStaff()){
+            return new ResponseEntity<>(savedListService.getAllProducts(id), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        
     }
 
     
