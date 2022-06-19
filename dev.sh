@@ -1,7 +1,5 @@
 #!/bin/bash
 
-printf "[*] STARTING DEPLOYMENT...\n"
-
 down_flg=0
 build_flg=0
 jar_flg=0
@@ -37,6 +35,8 @@ if [[ "$help_flg" -eq 1 ]]; then
 	printf "\nUSAGE: run.sh\n\tOPTIONS:\n\t\tno options : Only ups containers\n\t\t-d : Down containers\n\t\t-b : Build containers\n\t\t-j : Build Spring jar\n\t\t-a : All the options\n\n\n"
 	exit 0
 fi
+
+printf "[*] STARTING DEPLOYMENT...\n"
 
 if [[ "$jar_flg" -eq 1 ]]; then
 	printf "[*] BUILDING SPRING...\n"
