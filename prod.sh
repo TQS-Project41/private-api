@@ -1,7 +1,5 @@
 #!/bin/bash
 
-printf "[*] STARTING DEPLOYMENT...\n"
-
 down_flg=0
 build_flg=0
 jar_flg=0
@@ -38,6 +36,8 @@ if [[ "$help_flg" -eq 1 ]]; then
 	exit 0
 fi
 
+printf "[*] STARTING DEPLOYMENT...\n"
+
 if [[ "$jar_flg" -eq 1 ]]; then
 	printf "[*] BUILDING SPRING...\n"
 	(cd api; mvn clean package -DskipTests)
@@ -45,7 +45,6 @@ if [[ "$jar_flg" -eq 1 ]]; then
 	(($? != 0)) && { printf "[-] ERROR BUILDING SPRING \n"; exit 1; }
 	printf "[+] DONE.\n"
 fi
-
 
 printf "[*] DEPLOYING CONTAINERS...\n"
 
