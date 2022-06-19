@@ -1,7 +1,5 @@
 #!/bin/bash
 
-printf "[*] STARTING DEPLOYMENT...\n"
-
 down_flg=0
 build_flg=0
 jar_flg=0
@@ -38,6 +36,8 @@ if [[ "$help_flg" -eq 1 ]]; then
 	exit 0
 fi
 
+printf "[*] STARTING DEPLOYMENT...\n"
+
 if [[ "$jar_flg" -eq 1 ]]; then
 	printf "[*] BUILDING SPRING...\n"
 	(cd api; mvn clean package -DskipTests)
@@ -51,17 +51,17 @@ printf "[*] DEPLOYING CONTAINERS...\n"
 
 if [[ "$down_flg" -eq 1 ]]; then
 	printf "\t[+] DOWNING CONTAINERS...\n"
-	sudo docker-compose -f docker-compose.dev.yml --env-file ./testing/.env down
+	docker-compose -f docker-compose.dev.yml --env-file ./testing/.env down
 	printf "[+] DONE.\n"
 fi
 
 if [[ "$build_flg" -eq 1 ]]; then
 	printf "\t[+] BUILDING CONTAINERS...\n"
-	sudo docker-compose -f docker-compose.dev.yml --env-file ./testing/.env build
+	docker-compose -f docker-compose.dev.yml --env-file ./testing/.env build
 	ret=$?
 	(($? != 0)) && { printf "[-] ERROR BUILDING CONTAINERS \n"; exit 1; }
 	printf "\t[+] DONE.\n"
 fi
 
 printf "[+] RUNNING CONTAINERS...\n"
-sudo docker-compose -f docker-compose.dev.yml --env-file ./testing/.env up -d
+docker-compose -f docker-compose.dev.yml --env-file ./testing/.env up -d
