@@ -78,7 +78,7 @@ public class StoredController {
         Optional<User> user_opt = userService.getAuthenticatedUser();
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = user_opt.get();
-        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+        if (user.getId() == ret_final.getProductList().getUser().getId() || user.getAdmin() || user.getStaff()){
             return new ResponseEntity<>(ret_final,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -97,7 +97,7 @@ public class StoredController {
         Optional<User> user_opt = userService.getAuthenticatedUser();
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = user_opt.get();
-        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+        if (user.getId() == ret_final.getProductList().getUser().getId() || user.getAdmin() || user.getStaff()){
             Optional<ProductListItem> product_final = savedListService.updateListItem(ret_final, productOptional.get(), amount);
             if (!product_final.isPresent())   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(product_final.get(),HttpStatus.OK);
@@ -119,7 +119,7 @@ public class StoredController {
         Optional<User> user_opt = userService.getAuthenticatedUser();
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = user_opt.get();
-        if (ret_final.getProductList().getUser() == user || user.getAdmin() || user.getStaff()){
+        if (user.getId() == ret_final.getProductList().getUser().getId() || user.getAdmin() || user.getStaff()){
             savedListService.delete(ret_final);
             return new ResponseEntity<>(HttpStatus.OK);
         }
