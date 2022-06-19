@@ -1,0 +1,47 @@
+version: "3.0"
+services:
+  deploy_db:
+    image: mysql:latest
+    networks:
+      - private_prod
+    env_file: ./deployment/.env
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    volumes:
+      - datafiles:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: "mysql $MYSQL_DATABASE -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'SELECT 1;'"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  deploy_api:
+    depends_on:
+      deploy_db:
+        condition: service_healthy
+    build: ./api/
+    networks:
+      - private_prod
+    env_file: ./deployment/.env
+    environment:
+      SPRING_APPLICATION_JSON: '{
+          "spring.datasource.url"  : "jdbc:mysql://deploy_db:3306/$MYSQL_DATABASE?useSSL=true",
+          "spring.datasource.username" : "$MYSQL_USER",
+          "spring.datasource.password" : "$MYSQL_PASSWORD",
+          "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL8Dialect",
+          "spring.jpa.hibernate.ddl-auto" : "update",
+          "server.port": $SPRING_DOCKER_PORT
+        }'
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+    restart: on-failure
+
+networks:
+  private_prod:
+  
+volumes:
+  datafiles:
