@@ -51,17 +51,17 @@ printf "[*] DEPLOYING CONTAINERS...\n"
 
 if [[ "$down_flg" -eq 1 ]]; then
 	printf "\t[+] DOWNING CONTAINERS...\n"
-	sudo docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env down
+	docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env down
 	printf "[+] DONE.\n"
 fi
 
 if [[ "$build_flg" -eq 1 ]]; then
 	printf "\t[+] BUILDING CONTAINERS...\n"
-	sudo docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env build
+	docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env build
 	ret=$?
 	(($? != 0)) && { printf "[-] ERROR BUILDING CONTAINERS \n"; exit 1; }
 	printf "\t[+] DONE.\n"
 fi
 
 printf "[+] RUNNING CONTAINERS...\n"
-sudo docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env up -d
+docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env up -d
