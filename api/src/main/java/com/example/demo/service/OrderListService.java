@@ -67,4 +67,8 @@ public class OrderListService {
     return order;
   }
 
+  public List<ProductListItem> getAllProducts(Long id) {
+    return productListItemRepository.findByListId(id);
+  }
+
 }
