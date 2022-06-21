@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.OrderList;
+import com.example.demo.models.ProductListItem;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.service.AddressService;
@@ -104,5 +105,24 @@ public class OrderController {
     }
 
     */
+
+
+    @GetMapping("{id}/products")
+    public ResponseEntity<List<ProductListItem>> getProductsOrderByID( @PathVariable long id) {
+        Optional<OrderList> ret = orderListService.findById(id);
+
+        if (!ret.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        OrderList ret_final = ret.get();
+
+        Optional<User> user_opt = userService.getAuthenticatedUser();
+        if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = user_opt.get();
+        if (user.getId() == ret_final.getProductList().getUser().getId() || user.getAdmin() || user.getStaff()){
+            return new ResponseEntity<>(orderListService.getAllProducts(id), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        
+    }
     
 }
