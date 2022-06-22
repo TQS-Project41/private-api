@@ -121,7 +121,7 @@ public class OrderController {
         User user = user_opt.get();
 
         if (user.getId() == ret_final.getProductList().getUser().getId()|| user.getAdmin() || user.getStaff()){
-            Map<String,Object> map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("order", ret_final);
             
             HashMap<String, Object> ret_delivery = deliveryService.getDelivery(ret_final.getDeliveryId());
@@ -149,7 +149,7 @@ public class OrderController {
         User user = user_opt.get();
 
         if (user.getId() == ret_final.getProductList().getUser().getId()){
-            Map<String,Object> map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("order", ret_final);
             
             HashMap<String, Object> ret_delivery = deliveryService.cancelDelivery(ret_final.getDeliveryId());
