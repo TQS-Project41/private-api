@@ -21,13 +21,13 @@ import org.json.simple.parser.ParseException;
 public class DeliveryService {
     
     private String email="coviran@ua.pt";
-    private String password="vascovasco";
+    private String data="vascovasco";
     private  String url= "http://localhost:8080/";
 
     private String getAuthenticationToken() throws IOException, InterruptedException, ParseException{
         Map<String,String> map = new HashMap<>();
         map.put("email", this.email);
-        map.put("password", this.password);
+        map.put("password", this.data);
         HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
             .uri(URI.create(url+"login")).
             POST(HttpRequest.BodyPublishers.ofString(new JSONObject(map).toJSONString()))
