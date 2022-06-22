@@ -34,11 +34,6 @@ public class AddressController {
     @Autowired
     private UserService userService;
 
-  
-
-    
-
-
     @GetMapping("")
     public ResponseEntity<List<Address>> getAddress() {
         Optional<User> user_opt = userService.getAuthenticatedUser();

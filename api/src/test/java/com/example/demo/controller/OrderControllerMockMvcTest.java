@@ -2,12 +2,15 @@ package com.example.demo.controller;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.*;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -30,6 +33,7 @@ import com.example.demo.models.User;
 import com.example.demo.security.JwtUtils;
 import com.example.demo.security.WebSecurityConfig;
 import com.example.demo.service.AddressService;
+import com.example.demo.service.DeliveryService;
 import com.example.demo.service.OrderListService;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.StoreService;
@@ -58,9 +62,12 @@ public class OrderControllerMockMvcTest {
     @MockBean
     private AddressService addressService;
     
-    @MockBean
-    private ProductService productService;
+  @MockBean
+  private ProductService productService;
 
+  @MockBean
+  private DeliveryService deliveryService;
+    
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
@@ -132,14 +139,14 @@ public class OrderControllerMockMvcTest {
     }
 
     @Test
-    void testPost_thenReturnOrder(){
+    void testPost_thenReturnOrder() throws IOException, InterruptedException, ParseException{
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
       Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
       Store store = new Store("Puma", address);
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       when(addressService.getById(1)).thenReturn(address);
       when(storeService.getById(1)).thenReturn(store);
-
+      when(deliveryService.postOrder(any())).thenReturn(1L);
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
@@ -163,11 +170,24 @@ public class OrderControllerMockMvcTest {
                
     }
     @Test
-    void testGetOrdersValid_thenReturnOrder(){
+    void testDeleteOrders_thenReturnOrder(){
+      User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+      when(orderService.findById(1l)).thenReturn(Optional.empty());
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .delete("/orders/{id}",1)
+                .then()
+                .statusCode(404);
+               
+    }
+    @Test
+    void testGetOrdersInvalidUser_thenReturnNotFOund(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
       Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
       Store store = new Store("Puma", address);
-      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.empty());
       OrderList ret = new OrderList(new ProductList(user), address, store, 1l);
       when(orderService.findById(1l)).thenReturn(Optional.of(ret));
         RestAssuredMockMvc.given()
@@ -175,9 +195,70 @@ public class OrderControllerMockMvcTest {
                 .when()
                 .get("/orders/{id}",1)
                 .then()
-                .statusCode(200);
+                .statusCode(404);
                
     }
+
+    @Test
+    void testDeleteOrdersInvalidUser_thenReturnNotFOund(){
+      User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
+      Store store = new Store("Puma", address);
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.empty());
+      OrderList ret = new OrderList(new ProductList(user), address, store, 1l);
+      when(orderService.findById(1l)).thenReturn(Optional.of(ret));
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .delete("/orders/{id}",1)
+                .then()
+                .statusCode(404);
+               
+    }
+
+
+    @Test
+    void testGetOrdersValid_thenReturnOrder() throws IOException, InterruptedException, ParseException{
+      User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
+      Store store = new Store("Puma", address);
+      HashMap<String, Object> ret_map = new HashMap<>();
+      ret_map.put("status", "QUEUED");
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+      OrderList ret = new OrderList(new ProductList(user), address, store, 1l);
+      when(orderService.findById(1l)).thenReturn(Optional.of(ret));
+      when(deliveryService.getDelivery(anyLong())).thenReturn(ret_map);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .get("/orders/{id}",1)
+                .then()
+                .statusCode(200).and().body("status", equalTo("QUEUED"));
+               
+    }
+
+    @Test
+    void testDeleteOrdersValid_thenReturnOrder() throws IOException, InterruptedException, ParseException{
+      User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
+      Store store = new Store("Puma", address);
+      HashMap<String, Object> ret_map = new HashMap<>();
+      ret_map.put("status", "CANCELED");
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
+      OrderList ret = new OrderList(new ProductList(user), address, store, 1l);
+      when(orderService.findById(1l)).thenReturn(Optional.of(ret));
+      when(deliveryService.cancelDelivery(anyLong())).thenReturn(ret_map);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .delete("/orders/{id}",1)
+                .then()
+                .statusCode(200).and().body("status", equalTo("CANCELED"));
+               
+    }
+
     @Test
     void testGetOrdersiValidUser_thenReturnForbidden(){
       User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
@@ -200,14 +281,18 @@ public class OrderControllerMockMvcTest {
 
 
     @Test
-    void testGetOrdersiValidUserAdmin_thenReturnOrder(){
+    void testGetOrdersiValidUserAdmin_thenReturnOrder() throws IOException, InterruptedException, ParseException{
       User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", true, false);
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
       Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
       Store store = new Store("Puma", address);
-      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user1));
+ 
+      HashMap<String, Object> ret_map = new HashMap<>();
+      ret_map.put("status", "QUEUED");
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       OrderList ret = new OrderList(new ProductList(user), address, store, 1l);
       when(orderService.findById(1l)).thenReturn(Optional.of(ret));
+      when(deliveryService.getDelivery(anyLong())).thenReturn(ret_map);
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
@@ -218,14 +303,17 @@ public class OrderControllerMockMvcTest {
     }
 
     @Test
-    void testGetOrdersiValidUserStaff_thenReturnOrder(){
+    void testGetOrdersiValidUserStaff_thenReturnOrder() throws IOException, InterruptedException, ParseException{
       User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, true);
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
       Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
       Store store = new Store("Puma", address);
-      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user1));
+      HashMap<String, Object> ret_map = new HashMap<>();
+      ret_map.put("status", "QUEUED");
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user));
       OrderList ret = new OrderList(new ProductList(user), address, store, 1l);
       when(orderService.findById(1l)).thenReturn(Optional.of(ret));
+      when(deliveryService.getDelivery(anyLong())).thenReturn(ret_map);
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
@@ -235,6 +323,7 @@ public class OrderControllerMockMvcTest {
                
     }
 
+    
     @Test
     void testGetOrdersByUser_thenReturnOrder(){
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
@@ -244,6 +333,20 @@ public class OrderControllerMockMvcTest {
                 .contentType("application/json")
                 .when()
                 .get("/orders/{id}",1)
+                .then()
+                .statusCode(404);
+               
+    }
+
+    @Test
+    void testDeleteOrdersByUser_thenReturnOrder(){
+      User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      when(userService.getAuthenticatedUser()).thenReturn(Optional.empty());
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .delete("/orders/{id}",1)
                 .then()
                 .statusCode(404);
                
@@ -260,18 +363,34 @@ public class OrderControllerMockMvcTest {
                 .statusCode(400);
     }
 
-    @Test
-    void testGetCartbyInvalidUser_thenReturnNotFound(){
-        when(userService.getAuthenticatedUser()).thenReturn(Optional. empty() );
-        RestAssuredMockMvc.given()
-                .contentType("application/json")
-                .when()
-                .get("/orders/")
-                .then()
-                .statusCode(200).and().
-                body("content.deliveryId", hasItems());
-             
-    }
+  @Test
+  void testGetCartbyInvalidUser_thenReturnNotFound(){
+      when(userService.getAuthenticatedUser()).thenReturn(Optional. empty() );
+      RestAssuredMockMvc.given()
+              .contentType("application/json")
+              .when()
+              .get("/orders/")
+              .then()
+              .statusCode(200).and().
+              body("content.deliveryId", hasItems());
+            
+  }
+
+  @Test
+  void testGetFee_thenReturnFee() throws IOException, InterruptedException, ParseException{
+    HashMap<String, Double> map = new HashMap<>();
+    map.put("fee", 5.0);
+      when(deliveryService.getFee(anyLong())).thenReturn(map);
+
+      RestAssuredMockMvc.given()
+              .contentType("application/json")
+              .when()
+              .get("/orders/{id}/fee",1)
+              .then()
+              .statusCode(200).and().
+              body("fee", equalTo(5.0F));
+            
+  }
     
     
 }
