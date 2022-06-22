@@ -29,7 +29,7 @@ public class OrderList {
     @JoinColumn(name = "productList_id")
     private ProductList productList;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "address_id", referencedColumnName = "id" , nullable = false)
     private Address address;
 

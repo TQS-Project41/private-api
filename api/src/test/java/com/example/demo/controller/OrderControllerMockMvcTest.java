@@ -182,6 +182,8 @@ public class OrderControllerMockMvcTest {
     void testGetOrdersiValidUser_thenReturnForbidden(){
       User user1= new User("alex20002ss011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
       User user= new User("alex20002011@gmail.com", "Alexandre", "pass",LocalDate.of(2000, 06, 28), "910123433", false, false);
+      user1.setId(1l);
+
       Address address = new Address("Portugal", "1201-222", "Aveiro", "Rua das Estia");
       Store store = new Store("Puma", address);
       when(userService.getAuthenticatedUser()).thenReturn(Optional.of(user1));

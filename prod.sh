@@ -36,6 +36,8 @@ if [[ "$help_flg" -eq 1 ]]; then
 	exit 0
 fi
 
+printf "[*] STARTING DEPLOYMENT...\n"
+
 if [[ "$jar_flg" -eq 1 ]]; then
 	printf "[*] BUILDING SPRING...\n"
 	(cd api; mvn clean package -DskipTests)
@@ -44,22 +46,21 @@ if [[ "$jar_flg" -eq 1 ]]; then
 	printf "[+] DONE.\n"
 fi
 
-
 printf "[*] DEPLOYING CONTAINERS...\n"
 
 if [[ "$down_flg" -eq 1 ]]; then
 	printf "\t[+] DOWNING CONTAINERS...\n"
-	sudo docker-compose down
+	docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env down
 	printf "[+] DONE.\n"
 fi
 
 if [[ "$build_flg" -eq 1 ]]; then
 	printf "\t[+] BUILDING CONTAINERS...\n"
-	sudo docker-compose build
+	docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env build
 	ret=$?
 	(($? != 0)) && { printf "[-] ERROR BUILDING CONTAINERS \n"; exit 1; }
 	printf "\t[+] DONE.\n"
 fi
 
 printf "[+] RUNNING CONTAINERS...\n"
-sudo docker-compose up
+docker-compose -f docker-compose.prod.yml --env-file ./deployment/.env up -d
