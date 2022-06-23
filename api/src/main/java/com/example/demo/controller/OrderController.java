@@ -1,12 +1,14 @@
 package com.example.demo.controller;
+
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Address;
 import com.example.demo.models.OrderList;
+import com.example.demo.models.OrderProductItem;
+import com.example.demo.models.Product;
+import com.example.demo.models.ProductListItem;
 import com.example.demo.models.Store;
 import com.example.demo.models.User;
 import com.example.demo.service.AddressService;
+import com.example.demo.service.CartListService;
 import com.example.demo.service.DeliveryService;
 import com.example.demo.service.OrderListService;
 import com.example.demo.service.StoreService;
 import com.example.demo.service.UserService;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -127,6 +132,12 @@ public class OrderController {
             HashMap<String, Object> ret_delivery = deliveryService.getDelivery(ret_final.getDeliveryId());
 
             map.put("status", ret_delivery.get("status"));
+
+            map.put("products", orderListService.getAllOrderItems(ret_final.getId()).stream().map(item -> Map.of("product", item.getProduct(), "price", item.getPrice(), "amount", 0)).collect(Collectors.toMap(v -> ((Product) v.get("product")).getId(), v -> v)));
+
+            for (ProductListItem item : orderListService.getAllItems(ret_final.getId())) {
+                ((Map<Long, Map<String, Object>>) map.get("products")).get(item.getId().getProductId()).put("amount", item.getAmount());
+            }
 
             return new ResponseEntity<>(map,HttpStatus.OK);
 

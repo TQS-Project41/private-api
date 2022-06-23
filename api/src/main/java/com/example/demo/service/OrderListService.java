@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,13 @@ public class OrderListService {
 
   public List<OrderProductItem> getAllOrderItems(Long orderId) {
     return orderProductItemRepository.findByOrderListId(orderId);
+  }
+
+  public List<ProductListItem> getAllItems(Long orderId) {
+    Optional<OrderList> order = findById(orderId);
+    if (order.isEmpty()) return Arrays.asList();
+
+    return productListItemRepository.findByListId(order.get().getProductList().getId());
   }
 
   public OrderList createFromCart(User user, Address address, Store store, Long deliveryId, LocalDateTime deliveryTimestamp) {

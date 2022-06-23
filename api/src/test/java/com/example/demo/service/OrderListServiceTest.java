@@ -120,6 +120,23 @@ public class OrderListServiceTest {
   }
 
   @Test
+  public void whenGettingAllItems_thenReturnsList() {
+
+    List<ProductListItem> items = Arrays.asList(new ProductListItem(), new ProductListItem());
+
+    Mockito.when(repository.findById(null)).thenReturn(Optional.of(new OrderList(new ProductList(), null, null, null)));
+    Mockito.when(productListItemRepository.findByListId(0L)).thenReturn(items);
+
+    List<ProductListItem> foundItems = service.getAllItems(null);
+
+    assertThat(foundItems).containsExactlyElementsOf(items);
+
+    Mockito.verify(repository, VerificationModeFactory.times(1)).findById(null);
+    Mockito.verify(productListItemRepository, VerificationModeFactory.times(1)).findByListId(0L);
+
+  }
+
+  @Test
   public void whenCreatingFromCart_thenCartAndOrderHaveSameProductList() {
 
     User user = new User();
