@@ -133,12 +133,6 @@ public class OrderController {
 
             map.put("status", ret_delivery.get("status"));
 
-            map.put("products", orderListService.getAllOrderItems(ret_final.getId()).stream().map(item -> Map.of("product", item.getProduct(), "price", item.getPrice(), "amount", 0)).collect(Collectors.toMap(v -> ((Product) v.get("product")).getId(), v -> v)));
-
-            for (ProductListItem item : orderListService.getAllItems(ret_final.getId())) {
-                ((Map<Long, Map<String, Object>>) map.get("products")).get(item.getId().getProductId()).put("amount", item.getAmount());
-            }
-
             return new ResponseEntity<>(map,HttpStatus.OK);
 
         }
