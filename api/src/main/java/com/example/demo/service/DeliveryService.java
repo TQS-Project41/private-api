@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,9 +21,14 @@ import org.json.simple.parser.ParseException;
 @Service
 public class DeliveryService {
     
-    private String email="coviran@ua.pt";
-    private String data="vascovasco";
-    private  String url= "http://localhost:8080/";
+    @Value("${generic.auth.email}")
+    private String email;
+
+    @Value("${generic.auth.password}")
+    private String data;
+
+    @Value("${generic.base_url}")
+    private  String url;
 
     private String getAuthenticationToken() throws IOException, InterruptedException, ParseException{
         Map<String,String> map = new HashMap<>();

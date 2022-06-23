@@ -35,7 +35,8 @@ services:
           "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL8Dialect",
           "spring.jpa.hibernate.ddl-auto" : "update",
           "server.port": $SPRING_DOCKER_PORT,
-          "spring.flyway.enabled": true
+          "spring.flyway.enabled": true,
+          "generic.base_url": "http://172.17.0.1:$SPRING_LOCAL_PORT/"
         }'
     ports:
       - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
