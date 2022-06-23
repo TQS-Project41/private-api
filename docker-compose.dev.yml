@@ -11,7 +11,7 @@ services:
       MYSQL_PASSWORD: $MYSQL_PASSWORD
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     volumes:
-      - datafiles:/var/lib/dev_mysql
+      - datafiles_private_dev:/var/lib/dev_mysql
     restart: always
     healthcheck:
       test: "mysql $MYSQL_DATABASE -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'SELECT 1;'"
@@ -44,4 +44,4 @@ networks:
   private_test:
   
 volumes:
-  datafiles:
+  datafiles_private_dev:

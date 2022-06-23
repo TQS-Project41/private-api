@@ -4,6 +4,7 @@ down_flg=0
 build_flg=0
 jar_flg=0
 help_flg=0
+up_flg=0
 sleeps="10"
 time_per_sleep=3
 
@@ -21,12 +22,16 @@ do
 		;;
 		j)
 			jar_flg=1
+		;;
+		u)
+			up_flg=1
 		;;	
 		
 		a)
 			jar_flg=1
 			down_flg=1
 			build_flg=1
+			up_flg=1
 		;;
 	esac
 done
@@ -63,5 +68,7 @@ if [[ "$build_flg" -eq 1 ]]; then
 	printf "\t[+] DONE.\n"
 fi
 
-printf "[+] RUNNING CONTAINERS...\n"
-docker-compose -f docker-compose.dev.yml --env-file ./testing/.env up -d
+if [[ "$up_flg" -eq 1 ]]; then
+	printf "[+] RUNNING CONTAINERS...\n"
+	docker-compose -f docker-compose.dev.yml --env-file ./testing/.env up -d
+fi
