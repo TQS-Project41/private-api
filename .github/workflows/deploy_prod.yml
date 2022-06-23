@@ -1,0 +1,12 @@
+name: Continuous Delivery 4 Production Environment (private)
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, dev]
+    steps:
+      - uses: actions/checkout@v1
+      - run: sh deploy_private.sh

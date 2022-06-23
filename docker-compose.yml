@@ -1,7 +1,9 @@
 version: "3.0"
 services:
-  db:
+  private_db:
     image: mysql:latest
+    networks:
+      - private_dev
     env_file: ./.env
     environment:
       MYSQL_DATABASE: $MYSQL_DATABASE
@@ -11,37 +13,16 @@ services:
     ports:
       - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
     volumes:
-      - datafiles:/var/lib/mysql
+      - datafiles_private_only:/var/lib/mysql_private_only
     restart: always
     healthcheck:
       test: "mysql $MYSQL_DATABASE -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'SELECT 1;'"
       interval: 10s
       timeout: 10s
       retries: 10
-  api:
-    depends_on:
-      db:
-        condition: service_healthy
-    build: ./api/
-    env_file: ./.env
-    environment:
-      SPRING_APPLICATION_JSON: '{
-          "spring.datasource.url"  : "jdbc:mysql://db:$MYSQL_DOCKER_PORT/$MYSQL_DATABASE?useSSL=true",
-          "spring.datasource.username" : "$MYSQL_USER",
-          "spring.datasource.password" : "$MYSQL_PASSWORD",
-          "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL8Dialect",
-          "spring.jpa.hibernate.ddl-auto" : "update",
-          "server.port": $SPRING_DOCKER_PORT
-        }'
-    ports:
-      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
-    restart: on-failure
-    healthcheck:
-      test: "curl http://localhost:$SPRING_DOCKER_PORT/"
-      interval: 10s
-      timeout: 10s
-      retries: 10
 
-  
+networks:
+  private_dev:
+
 volumes:
-  datafiles:
+  datafiles_private_only:
