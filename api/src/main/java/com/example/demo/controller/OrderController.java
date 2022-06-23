@@ -125,7 +125,7 @@ public class OrderController {
         if (!user_opt.isPresent())  return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = user_opt.get();
 
-        if (user.getId() == ret_final.getProductList().getUser().getId()|| user.getAdmin() || user.getStaff()){
+        if (user.getId() == ret_final.getProductList().getUser().getId()|| user.getAdmin() || user.getStaff()) {
             Map<String,Object> map = new HashMap<>();
             map.put("order", ret_final);
             
