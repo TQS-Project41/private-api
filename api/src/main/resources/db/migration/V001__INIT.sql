@@ -38,7 +38,7 @@ CREATE TABLE `address` (
 
 LOCK TABLES `address` WRITE;
 /*!40000 ALTER TABLE `address` DISABLE KEYS */;
-INSERT INTO `address` VALUES (7,'Rua 25 de Abril, nº704','Ovar','Portugal','3880-345'),(8,'Rua José de Castro, nº9','Gaia','Portugal','4400-642'),(9,'Avenida São Nicolau, 2ªandar, 2ºesq','Coimbra','Portugal','3000-923'),(10,'Rua do Canatro, nº34','Aveiro','Portugal','3800-764'),(11,'Rua Afonso Bernardes, nº87','Porto','Portugal','4000-173'),(12,'Rua Infante Dão Henrique, nº234','Coimbra','Portugal','3000-357');
+INSERT INTO `address` VALUES (7,'Rua 25 de Abril','Ovar','Portugal','3880-291'),(8,'Rua José de Castro','Gaia','Portugal','4405-516'),(9,'Avenida São Nicolau','Santa Maria Da Feira','Portugal','4520-248'),(10,'Rua do Canatro','Aveiro','Portugal','3880-841'),(11,'Rua Doutor Mário Sacramento','Aveiro','Portugal','3810-106'),(12,'Rua Doutor Mário Sacramento','Aveiro','Portugal','3810-106');
 /*!40000 ALTER TABLE `address` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -315,7 +315,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (46,'1948-01-08','lucilia@gmail.com',_binary '\0',_binary '\0','Lucília Santos','santos','912 345 642'),(47,'1983-05-27','andre@gmail.com',_binary '',_binary '\0','André Vaz','vaz','962 531 971'),(48,'2003-12-04','duarte@gmail.com',_binary '\0',_binary '','Duarte Henriques','henriques','918 496 114'),(49,'2022-06-06','admin@admin.pt',_binary '\0',_binary '\0','admin','admin','987659865432');
+INSERT INTO `user` VALUES (46,'1948-01-08','lucilia@gmail.com',_binary '\0',_binary '\0','Lucília Santos','santos','912345642'),(47,'1983-05-27','andre@gmail.com',_binary '',_binary '\0','André Vaz','vaz','962531971'),(48,'2003-12-04','duarte@gmail.com',_binary '\0',_binary '','Duarte Henriques','henriques','918496114'),(49,'2022-06-06','admin@admin.pt',_binary '\0',_binary '\0','admin','admin','987659865432');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
