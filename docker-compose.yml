@@ -1,0 +1,28 @@
+version: "3.0"
+services:
+  private_db:
+    image: mysql:latest
+    networks:
+      - private_dev
+    env_file: ./.env
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    ports:
+      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+    volumes:
+      - datafiles_private_only:/var/lib/mysql_private_only
+    restart: always
+    healthcheck:
+      test: "mysql $MYSQL_DATABASE -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'SELECT 1;'"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+networks:
+  private_dev:
+
+volumes:
+  datafiles_private_only:
